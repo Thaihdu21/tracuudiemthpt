@@ -6,13 +6,13 @@
 <title>Tra Cứu Điểm Thi THPT 2026</title>
 <meta name="description" content="Tra cứu điểm thi tốt nghiệp THPT 2026. Xem điểm từng môn, xếp hạng theo khối, top thủ khoa toàn quốc.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 ::-webkit-scrollbar{width:8px}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.1);border-radius:100px}
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#7c3aed,#a855f7);border-radius:100px}
-
 body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#7c3aed 100%);display:flex;flex-direction:column;align-items:center;padding:30px 16px}
 .container{width:100%;max-width:720px}
 
@@ -29,7 +29,8 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .sidebar.open{right:0}
 .sidebar-header{background:linear-gradient(135deg,#7c3aed,#a855f7);padding:24px 20px 20px;display:flex;align-items:center;justify-content:space-between}
 .sidebar-header .sb-title{color:white;font-size:16px;font-weight:800}
-.sidebar-close{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:16px;display:flex;align-items:center;justify-content:center}
+.sidebar-close{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.sidebar-close:hover{background:rgba(255,255,255,0.35)}
 .sidebar-body{padding:16px;flex:1;overflow-y:auto}
 .sidebar-nav-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;margin-bottom:10px;cursor:pointer;text-decoration:none;transition:all 0.2s;border:2px solid transparent;background:#f8faff}
 .sidebar-nav-item:hover{background:#f3e8ff;border-color:#7c3aed;transform:translateX(-4px)}
@@ -39,6 +40,88 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .sidebar-nav-item .nav-sub{font-size:12px;color:#888;margin-top:2px}
 .sidebar-section-label{font-size:11px;font-weight:700;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;padding:0 4px;margin-bottom:10px}
 .sidebar-divider{border:none;border-top:1px solid #f0f0f0;margin:6px 0 14px}
+.compare-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:10px;background:linear-gradient(135deg,#f3e8ff,#ede9fe);border:2px solid #7c3aed;cursor:pointer;transition:all 0.2s}
+.compare-banner:hover{transform:translateX(-4px);box-shadow:0 4px 16px rgba(124,58,237,0.2)}
+.donate-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:10px;background:linear-gradient(135deg,#fff0f6,#ffe4f0);border:2px solid #f72585;cursor:pointer;transition:all 0.2s}
+.donate-banner:hover{transform:translateX(-4px);box-shadow:0 4px 16px rgba(247,37,133,0.2)}
+
+/* DONATE OVERLAY */
+.donate-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.donate-overlay.show{opacity:1;pointer-events:all}
+.donate-modal{background:white;border-radius:28px;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,0.3);overflow:hidden;transform:translateY(40px) scale(0.96);transition:transform 0.35s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
+.donate-overlay.show .donate-modal{transform:translateY(0) scale(1)}
+.dm-header{background:linear-gradient(135deg,#ae017e,#f72585);padding:28px 24px 22px;text-align:center;position:relative}
+.dm-header .dm-logo{font-size:52px;display:block;margin-bottom:8px}
+.dm-header h2{color:white;font-size:20px;font-weight:800;margin-bottom:4px}
+.dm-header p{color:rgba(255,255,255,0.85);font-size:13px;line-height:1.6}
+.dm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:15px;display:flex;align-items:center;justify-content:center}
+.dm-body{padding:22px 20px}
+.dm-label{font-size:12px;font-weight:800;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.dm-coffee-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.dm-coffee-btn{padding:12px 6px;border-radius:14px;border:2px solid #f0e0f0;background:white;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:center}
+.dm-coffee-btn:hover{border-color:#f72585;background:#fff0f6}
+.dm-coffee-btn.active{border-color:#f72585;background:linear-gradient(135deg,#fff0f6,#ffe4f0)}
+.dm-coffee-btn .cb-icon{font-size:22px;display:block;margin-bottom:4px}
+.dm-coffee-btn .cb-label{font-size:11px;font-weight:700;color:#be185d}
+.dm-coffee-btn .cb-price{font-size:12px;font-weight:800;color:#f72585;margin-top:2px}
+.dm-custom-wrap{position:relative;margin-bottom:6px}
+.dm-custom-wrap input{width:100%;padding:13px 54px 13px 16px;border:2px solid #e0e0e0;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;outline:none;transition:all 0.3s;color:#333}
+.dm-custom-wrap input:focus{border-color:#f72585;box-shadow:0 0 0 4px rgba(247,37,133,0.12)}
+.dm-custom-unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:#bbb}
+.dm-min-note{font-size:12px;color:#ef4444;margin-bottom:10px;display:none;padding-left:4px}
+.dm-min-note.show{display:block}
+.dm-btn-qr{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,#ae017e,#f72585);color:white;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:all 0.3s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px}
+.dm-btn-qr:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(247,37,133,0.45)}
+.dm-qr-section{padding:0 20px 24px;display:none;text-align:center}
+.dm-qr-section.show{display:block}
+.dm-qr-amount{font-size:26px;font-weight:800;color:#be185d;margin-bottom:2px}
+.dm-qr-note{font-size:13px;color:#999;margin-bottom:14px}
+.dm-qr-img-wrap{background:linear-gradient(135deg,#fff0f6,#ffe4f0);border-radius:20px;padding:14px;margin-bottom:14px;border:2px solid #fbb6ce;display:inline-block}
+.dm-qr-img-wrap img{width:200px;height:200px;border-radius:10px;display:block}
+.dm-bank-info{background:#fdf2f8;border:1px solid #fbb6ce;border-radius:14px;padding:12px 16px;font-size:13px;color:#831843;text-align:left;line-height:2;margin-bottom:16px}
+.dm-bank-info strong{color:#be185d}
+.dm-actions{display:flex;gap:8px}
+.dm-btn-back{flex:1;padding:12px;border-radius:12px;border:2px solid #fbb6ce;background:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;color:#be185d}
+.dm-btn-thanks{flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#ae017e,#f72585);font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;color:white}
+.dm-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:#ddd;font-size:12px}
+.dm-divider::before,.dm-divider::after{content:'';flex:1;height:1px;background:#f0e0f0}
+
+/* COMPARE OVERLAY */
+.compare-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.compare-overlay.show{opacity:1;pointer-events:all}
+.compare-modal{background:white;border-radius:28px;width:100%;max-width:560px;box-shadow:0 30px 80px rgba(0,0,0,0.3);overflow:hidden;transform:translateY(40px) scale(0.96);transition:transform 0.35s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
+.compare-overlay.show .compare-modal{transform:translateY(0) scale(1)}
+.cm-header{background:linear-gradient(135deg,#7c3aed,#a855f7);padding:24px 24px 20px;position:relative}
+.cm-header h2{color:white;font-size:18px;font-weight:800;margin-bottom:4px}
+.cm-header p{color:rgba(255,255,255,0.85);font-size:13px}
+.cm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:15px;display:flex;align-items:center;justify-content:center}
+.cm-body{padding:20px}
+.cm-sbd-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.cm-sbd-row{display:flex;align-items:center;gap:10px}
+.cm-sbd-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.cm-sbd-input{flex:1;padding:11px 14px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;font-weight:600;font-family:inherit;outline:none;transition:all 0.3s;letter-spacing:1px}
+.cm-sbd-input:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.12)}
+.cm-sbd-input::placeholder{font-weight:400;letter-spacing:0;color:#aaa}
+.cm-remove-btn{width:32px;height:32px;border-radius:10px;border:2px solid #fee2e2;background:white;color:#ef4444;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cm-add-btn{width:100%;padding:11px;border:2px dashed #7c3aed;border-radius:12px;background:white;color:#7c3aed;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
+.cm-khoi-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.cm-khoi-row label{font-size:13px;font-weight:700;color:#555;white-space:nowrap}
+.cm-khoi-select{flex:1;padding:9px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;outline:none;color:#333}
+.cm-khoi-select:focus{border-color:#7c3aed}
+.cm-search-btn{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px}
+.cm-search-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.45)}
+.cm-error{padding:12px 16px;background:#fef2f2;border-radius:12px;color:#ef4444;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
+.cm-error.show{display:block}
+.cm-results{display:none}
+.cm-results.show{display:block}
+.cm-chart-wrap{position:relative;height:260px;margin-bottom:16px}
+.cm-table{width:100%;border-collapse:collapse;font-size:13px;border-radius:12px;overflow:hidden;border:2px solid #e8f0ff}
+.cm-table th{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;padding:10px 12px;text-align:left;font-weight:700;font-size:12px}
+.cm-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;color:#333}
+.cm-table tr:last-child td{border-bottom:none}
+.cm-table tr:nth-child(even) td{background:#f8f6ff}
+.cm-color-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.cm-winner-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;margin-left:6px}
 
 /* HEADER */
 .header{text-align:center;margin-bottom:30px;animation:fadeDown 0.6s ease}
@@ -47,7 +130,7 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .header p{color:rgba(255,255,255,0.85);margin-top:8px;font-size:14px}
 
 /* STATS */
-.stats-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.5s ease}
+.stats-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
 .stat-badge{background:rgba(255,255,255,0.15);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.25)}
 .stat-badge .stat-icon{font-size:18px}
 .stat-badge .stat-num{font-size:18px;font-weight:800;color:white;line-height:1}
@@ -65,60 +148,58 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .btn-search:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.5)}
 .btn-search:disabled{opacity:0.6;cursor:not-allowed;transform:none}
 
-/* RESULT */
+/* SCORES */
 .student-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:2px dashed #f0f0f0}
 .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
 .student-info h2{font-size:20px;color:#222;font-weight:800}
 .student-info .sbd-tag{font-size:13px;color:#888}
 .student-info .tinh-tag{font-size:13px;color:#7c3aed;font-weight:700;margin-top:2px}
-
-/* ĐIỂM GRID */
 .scores-grid{display:grid;gap:12px;margin-bottom:20px}
 .scores-grid.cols-2{grid-template-columns:repeat(2,1fr)}
 .scores-grid.cols-3{grid-template-columns:repeat(3,1fr)}
 .scores-grid.cols-4{grid-template-columns:repeat(4,1fr)}
 .score-box{border-radius:16px;padding:16px 10px;text-align:center;transition:transform 0.2s}
 .score-box:hover{transform:translateY(-2px)}
-.score-box.toan {background:linear-gradient(135deg,#d1fae522,#a7f3d044);border:2px solid #6ee7b7}
-.score-box.van  {background:linear-gradient(135deg,#fce7f322,#f9a8d444);border:2px solid #f472b6}
-.score-box.li   {background:linear-gradient(135deg,#dbeafe22,#93c5fd44);border:2px solid #60a5fa}
-.score-box.hoa  {background:linear-gradient(135deg,#fef3c722,#fde68a44);border:2px solid #fbbf24}
-.score-box.sinh {background:linear-gradient(135deg,#d1fae522,#6ee7b744);border:2px solid #34d399}
-.score-box.tin  {background:linear-gradient(135deg,#ede9fe22,#c4b5fd44);border:2px solid #a78bfa}
-.score-box.su   {background:linear-gradient(135deg,#fee2e222,#fca5a544);border:2px solid #f87171}
-.score-box.dia  {background:linear-gradient(135deg,#ffedd522,#fdba7444);border:2px solid #fb923c}
-.score-box.gdkt {background:linear-gradient(135deg,#f0fdf422,#bbf7d044);border:2px solid #4ade80}
-.score-box.nn   {background:linear-gradient(135deg,#e0f2fe22,#7dd3fc44);border:2px solid #38bdf8}
-.score-box.cncn {background:linear-gradient(135deg,#fdf4ff22,#e879f944);border:2px solid #d946ef}
-.score-box.cnnn {background:linear-gradient(135deg,#f0fdf422,#86efac44);border:2px solid #4ade80}
-.score-box .mon {font-size:11px;font-weight:700;color:#666;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
-.score-box .diem{font-size:30px;font-weight:800;color:#333;line-height:1}
+.score-box.toan{background:linear-gradient(135deg,#d1fae522,#a7f3d044);border:2px solid #6ee7b7}
+.score-box.van{background:linear-gradient(135deg,#fce7f322,#f9a8d444);border:2px solid #f472b6}
+.score-box.li{background:linear-gradient(135deg,#dbeafe22,#93c5fd44);border:2px solid #60a5fa}
+.score-box.hoa{background:linear-gradient(135deg,#fef3c722,#fde68a44);border:2px solid #fbbf24}
+.score-box.sinh{background:linear-gradient(135deg,#d1fae522,#6ee7b744);border:2px solid #34d399}
+.score-box.tin{background:linear-gradient(135deg,#ede9fe22,#c4b5fd44);border:2px solid #a78bfa}
+.score-box.su{background:linear-gradient(135deg,#fee2e222,#fca5a544);border:2px solid #f87171}
+.score-box.dia{background:linear-gradient(135deg,#ffedd522,#fdba7444);border:2px solid #fb923c}
+.score-box.gdkt{background:linear-gradient(135deg,#f0fdf422,#bbf7d044);border:2px solid #4ade80}
+.score-box.nn{background:linear-gradient(135deg,#e0f2fe22,#7dd3fc44);border:2px solid #38bdf8}
+.score-box.cncn{background:linear-gradient(135deg,#fdf4ff22,#e879f944);border:2px solid #d946ef}
+.score-box.cnnn{background:linear-gradient(135deg,#f0fdf422,#86efac44);border:2px solid #4ade80}
+.score-box .mon{font-size:11px;font-weight:700;color:#666;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.score-box .diem{font-size:30px;font-weight:800;line-height:1}
 .score-box.toan .diem{color:#059669}
-.score-box.van  .diem{color:#db2777}
-.score-box.li   .diem{color:#2563eb}
-.score-box.hoa  .diem{color:#d97706}
+.score-box.van .diem{color:#db2777}
+.score-box.li .diem{color:#2563eb}
+.score-box.hoa .diem{color:#d97706}
 .score-box.sinh .diem{color:#059669}
-.score-box.tin  .diem{color:#7c3aed}
-.score-box.su   .diem{color:#dc2626}
-.score-box.dia  .diem{color:#ea580c}
+.score-box.tin .diem{color:#7c3aed}
+.score-box.su .diem{color:#dc2626}
+.score-box.dia .diem{color:#ea580c}
 .score-box.gdkt .diem{color:#16a34a}
-.score-box.nn   .diem{color:#0284c7}
+.score-box.nn .diem{color:#0284c7}
 
-/* KHỐI SELECTOR */
+/* KHỐI */
 .khoi-section{margin-bottom:20px}
 .khoi-label{font-size:13px;font-weight:700;color:#666;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .khoi-grid{display:flex;flex-wrap:wrap;gap:8px}
 .khoi-btn{padding:8px 14px;border-radius:20px;border:2px solid #e0e0e0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#666;transition:all 0.2s}
-.khoi-btn:hover{border-color:#7c3aed;color:#7c3aed}
+.khoi-btn:hover:not(.disabled-khoi){border-color:#7c3aed;color:#7c3aed}
 .khoi-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent}
 .khoi-btn.disabled-khoi{opacity:0.35;cursor:not-allowed;text-decoration:line-through}
 
-/* TỔNG ĐIỂM */
+/* TỔNG */
 .tong-box{background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:16px;padding:20px 24px;margin-bottom:20px;color:white;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.tong-box .tong-left .tong-label{font-size:12px;font-weight:700;opacity:0.85;letter-spacing:1px;margin-bottom:4px}
-.tong-box .tong-left .tong-mon{font-size:13px;opacity:0.75}
-.tong-box .tong-left .tong-note{font-size:11px;opacity:0.65;margin-top:6px;font-style:italic}
-.tong-box .tong-score{font-size:48px;font-weight:800;flex-shrink:0;line-height:1}
+.tong-left .tong-label{font-size:12px;font-weight:700;opacity:0.85;letter-spacing:1px;margin-bottom:4px}
+.tong-left .tong-mon{font-size:13px;opacity:0.75}
+.tong-left .tong-note{font-size:11px;opacity:0.65;margin-top:6px;font-style:italic}
+.tong-score{font-size:48px;font-weight:800;flex-shrink:0;line-height:1}
 
 /* RANK */
 .rank-box{background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:16px;padding:16px 20px;margin-bottom:20px}
@@ -132,7 +213,19 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .rank-row .rank-sub{font-size:13px;color:#b45309;margin-top:2px}
 .rank-loading{text-align:center;color:#b45309;font-size:14px;padding:10px}
 
-/* AI BOX */
+/* PHÂN BỐ ĐIỂM */
+.dist-card{background:white;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px}
+.dist-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.dist-title{font-size:16px;font-weight:800;color:#333}
+.dist-scope-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.dist-scope-btn{padding:6px 14px;border-radius:20px;border:2px solid #e0e0e0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#666;transition:all 0.2s}
+.dist-scope-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent}
+.dist-chart-wrap{position:relative;height:220px}
+.dist-my-score{margin-top:14px;display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:12px;border:2px solid #7c3aed}
+.dist-my-score .dms-text{font-size:13px;font-weight:700;color:#7c3aed}
+.dist-my-score .dms-sub{font-size:12px;color:#6d28d9;margin-top:2px}
+
+/* AI */
 .ai-box{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:16px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden}
 .ai-box::before{content:'🤖';position:absolute;right:-10px;top:-10px;font-size:80px;opacity:0.08}
 .ai-box .ai-label{font-size:11px;color:#a78bfa;font-weight:700;letter-spacing:2px;margin-bottom:10px}
@@ -143,7 +236,8 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .ai-typing span:nth-child(3){animation-delay:0.4s}
 
 /* THỦ KHOA */
-.tk-card{background:white;border-radius:24px;padding:24px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;animation:fadeUp 0.6s ease}
+.tk-card{background:white;border-radius:24px;padding:24px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;animation:fadeUp 0.6s ease;transition:all 0.4s ease;overflow:hidden}
+.tk-card.hidden{opacity:0;max-height:0;padding:0 28px;margin-bottom:0;pointer-events:none}
 .tk-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
 .tk-title{font-size:16px;font-weight:800;color:#333}
 .tk-khoi-select{margin-left:auto;padding:7px 14px;border:2px solid #7c3aed;border-radius:20px;font-size:13px;font-weight:700;color:#7c3aed;background:white;font-family:inherit;cursor:pointer;outline:none;transition:all 0.2s}
@@ -152,12 +246,12 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .tk-scope-btn{padding:6px 14px;border-radius:20px;border:2px solid #e0e0e0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#666;transition:all 0.2s}
 .tk-scope-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent}
 .tk-list{display:flex;flex-direction:column;gap:10px}
-.tk-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;transition:transform 0.2s;cursor:default}
+.tk-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;transition:transform 0.2s}
 .tk-item:hover{transform:translateX(4px)}
 .tk-item.rank1{background:linear-gradient(135deg,#fff8e1,#ffe082);border:2px solid #ffd54f}
 .tk-item.rank2{background:linear-gradient(135deg,#f5f5f5,#e0e0e0);border:2px solid #bdbdbd}
 .tk-item.rank3{background:linear-gradient(135deg,#fbe9e7,#ffccbc);border:2px solid #ffab91}
-.tk-item.rank-rest{background:#f8faff;border:2px solid #e8f0ff}
+.tk-item.rank-rest{background:#f8f6ff;border:2px solid #e8e0ff}
 .tk-medal{font-size:26px;flex-shrink:0;width:36px;text-align:center}
 .tk-info{flex:1;min-width:0}
 .tk-info .tk-sbd{font-size:12px;color:#888;font-weight:600}
@@ -170,24 +264,24 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .btn-show-more:hover{background:#f3e8ff}
 .tk-loading{text-align:center;color:#aaa;padding:20px;font-size:14px}
 
-/* NOT FOUND */
 .not-found{text-align:center;padding:24px;color:#ef4444;font-weight:700;font-size:15px}
-
-/* FOOTER */
+.section-title{font-size:15px;font-weight:800;color:#444;margin:16px 0 10px}
 .footer{text-align:center;color:rgba(255,255,255,0.5);font-size:12px;margin-top:10px}
 
-/* RESPONSIVE */
 @media(max-width:480px){
   body{padding:20px 12px}
   .header h1{font-size:20px}
   .card{padding:18px 16px}
   .input-group{flex-direction:column}
   .scores-grid.cols-4{grid-template-columns:repeat(2,1fr)}
-  .scores-grid.cols-3{grid-template-columns:repeat(3,1fr)}
   .score-box .diem{font-size:24px}
   .tong-box .tong-score{font-size:36px}
   .sidebar{width:290px}
   .tk-card{padding:18px 16px}
+  .donate-modal{border-radius:20px 20px 0 0;max-width:100%}
+  .donate-overlay{align-items:flex-end;padding:0}
+  .compare-modal{border-radius:20px 20px 0 0;max-width:100%}
+  .compare-overlay{align-items:flex-end;padding:0}
 }
 
 @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
@@ -201,6 +295,8 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 
 <button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <span class="sb-title">📚 Điều hướng</span>
@@ -210,8 +306,27 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     <div class="sidebar-section-label">Danh mục</div>
     <a class="sidebar-nav-item active" href="/">
       <div class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-      <div><div class="nav-label">Tra cứu điểm THPT</div><div class="nav-sub">Trang chủ — Nhập SBD</div></div>
+      <div><div class="nav-label">Tra cứu điểm THPT</div><div class="nav-sub">Nhập SBD để xem điểm</div></div>
     </a>
+    <hr class="sidebar-divider">
+    <div class="sidebar-section-label">Công cụ</div>
+    <div class="compare-banner" onclick="openCompare()">
+      <div style="font-size:26px">⚔️</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:800;color:#7c3aed">So Sánh Điểm Thi</div>
+        <div style="font-size:11px;color:#6d28d9;margin-top:2px">So sánh 2–5 thí sinh cùng lúc</div>
+      </div>
+      <i class="fa-solid fa-chevron-right" style="color:#7c3aed;font-size:12px"></i>
+    </div>
+    <hr class="sidebar-divider">
+    <div class="donate-banner" onclick="openDonate()">
+      <div style="font-size:26px">☕</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:800;color:#be185d">Mua cho mình ly cà phê?</div>
+        <div style="font-size:11px;color:#db2777;margin-top:2px">Ủng hộ để duy trì trang web 💙</div>
+      </div>
+      <i class="fa-solid fa-chevron-right" style="color:#f72585;font-size:12px"></i>
+    </div>
     <hr class="sidebar-divider">
     <div class="sidebar-section-label">Thông tin</div>
     <div style="padding:8px 4px;font-size:12px;color:#aaa;line-height:2">
@@ -223,15 +338,97 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
   </div>
 </div>
 
+<!-- DONATE MODAL -->
+<div class="donate-overlay" id="donateOverlay" onclick="closeDonateOutside(event)">
+  <div class="donate-modal">
+    <div class="dm-header">
+      <button class="dm-close" onclick="closeDonate()"><i class="fa-solid fa-xmark"></i></button>
+      <span class="dm-logo">☕</span>
+      <h2>Mua cho mình 1 ly cà phê?</h2>
+      <p>Mỗi ly giúp duy trì server & tên miền<br>để trang web luôn miễn phí 💙</p>
+    </div>
+    <div id="dmStep1">
+      <div class="dm-body">
+        <div class="dm-label">Chọn số ly ☕</div>
+        <div class="dm-coffee-grid">
+          <button class="dm-coffee-btn" onclick="selectCoffee(1,20000,this)"><span class="cb-icon">☕</span><span class="cb-label">1 ly</span><span class="cb-price">20.000đ</span></button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(2,40000,this)"><span class="cb-icon">☕☕</span><span class="cb-label">2 ly</span><span class="cb-price">40.000đ</span></button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(3,60000,this)"><span class="cb-icon">☕☕☕</span><span class="cb-label">3 ly</span><span class="cb-price">60.000đ</span></button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(5,100000,this)"><span class="cb-icon">🧋</span><span class="cb-label">5 ly</span><span class="cb-price">100.000đ</span></button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(10,200000,this)"><span class="cb-icon">🎁</span><span class="cb-label">10 ly</span><span class="cb-price">200.000đ</span></button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(25,500000,this)"><span class="cb-icon">🏆</span><span class="cb-label">25 ly</span><span class="cb-price">500.000đ</span></button>
+        </div>
+        <div class="dm-divider">hoặc nhập tuỳ ý</div>
+        <div class="dm-custom-wrap">
+          <input type="number" id="dmAmount" placeholder="Nhập số tiền..." min="5000" oninput="onDmInput()">
+          <span class="dm-custom-unit">VNĐ</span>
+        </div>
+        <div class="dm-min-note" id="dmMinNote">⚠️ Số tiền tối thiểu 5.000đ</div>
+        <button class="dm-btn-qr" onclick="genDonateQR()"><i class="fa-solid fa-qrcode"></i> Tạo mã QR ABBANK</button>
+      </div>
+    </div>
+    <div class="dm-qr-section" id="dmStep2">
+      <div class="dm-qr-amount" id="dmQRAmount"></div>
+      <div class="dm-qr-note">Mở App ABBANK hoặc ứng dụng ngân hàng → Quét mã</div>
+      <div class="dm-qr-img-wrap"><img id="dmQRImg" src="" alt="ABBANK QR"></div>
+      <div class="dm-bank-info" id="dmBankInfo"></div>
+      <div class="dm-actions">
+        <button class="dm-btn-back" onclick="dmBackToStep1()">← Đổi số tiền</button>
+        <button class="dm-btn-thanks" onclick="closeDonate()">Đã chuyển xong 🎉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div class="compare-overlay" id="compareOverlay" onclick="closeCompareOutside(event)">
+  <div class="compare-modal">
+    <div class="cm-header">
+      <button class="cm-close" onclick="closeCompare()"><i class="fa-solid fa-xmark"></i></button>
+      <h2>⚔️ So Sánh Điểm Thi</h2>
+      <p>Nhập 2–5 SBD để so sánh điểm từng môn</p>
+    </div>
+    <div class="cm-body">
+      <div class="cm-sbd-list" id="cmSbdList"></div>
+      <button class="cm-add-btn" id="cmAddBtn" onclick="compareAddRow()">
+        <i class="fa-solid fa-plus"></i> Thêm SBD (tối đa 5)
+      </button>
+      <div class="cm-khoi-row">
+        <label>Khối so sánh:</label>
+        <select class="cm-khoi-select" id="cmKhoiSelect">
+          <option value="D01">D01 — Văn+Toán+NN</option>
+          <option value="A00">A00 — Toán+Lý+Hóa</option>
+          <option value="A01">A01 — Toán+Lý+NN</option>
+          <option value="B00">B00 — Toán+Hóa+Sinh</option>
+          <option value="C00">C00 — Văn+Sử+Địa</option>
+          <option value="A07">A07 — Toán+Sử+Địa</option>
+          <option value="D09">D09 — Toán+Sử+NN</option>
+          <option value="D10">D10 — Toán+Địa+NN</option>
+        </select>
+      </div>
+      <div class="cm-error" id="cmError"></div>
+      <button class="cm-search-btn" onclick="runCompare()">
+        <i class="fa-solid fa-chart-bar"></i> So sánh ngay
+      </button>
+      <div class="cm-results" id="cmResults">
+        <div class="section-title" style="margin-top:0">📊 Biểu đồ so sánh</div>
+        <div class="cm-chart-wrap"><canvas id="cmChart"></canvas></div>
+        <div class="section-title">📋 Bảng chi tiết</div>
+        <div style="overflow-x:auto;border-radius:12px">
+          <table class="cm-table"><thead id="cmTableHead"></thead><tbody id="cmTableBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container">
-  <!-- HEADER -->
   <div class="header">
     <span class="emoji-big">🎓</span>
     <h1>Tra Cứu Điểm Thi<br>Tốt Nghiệp THPT 2026</h1>
     <p>Nhập SBD để xem điểm từng môn + xếp hạng toàn quốc 👇</p>
   </div>
 
-  <!-- STATS -->
   <div class="stats-row">
     <div class="stat-badge">
       <span class="stat-icon">👥</span>
@@ -247,14 +444,11 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     </div>
   </div>
 
-  <!-- SEARCH -->
   <div class="card">
     <div class="input-group">
       <input type="text" id="sbdInput" placeholder="Nhập số báo danh..."
         maxlength="10" onkeydown="if(event.key==='Enter') search()">
-      <button class="btn-search" id="btnSearch" onclick="search()">
-        🔍 Tra cứu
-      </button>
+      <button class="btn-search" id="btnSearch" onclick="search()">🔍 Tra cứu</button>
     </div>
   </div>
 
@@ -276,12 +470,10 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     </div>
     <div class="tk-scope-row">
       <button class="tk-scope-btn active" onclick="setTkScope('quoc_gia',this)">🌍 Toàn quốc</button>
-      <button class="tk-scope-btn" onclick="setTkScope('mien',this)" id="btnTkMien">📍 Theo miền</button>
-      <button class="tk-scope-btn" onclick="setTkScope('tinh',this)" id="btnTkTinh">🏙️ Trong tỉnh</button>
+      <button class="tk-scope-btn" id="btnTkMien" onclick="setTkScope('mien',this)">📍 Theo miền</button>
+      <button class="tk-scope-btn" id="btnTkTinh" onclick="setTkScope('tinh',this)">🏙️ Trong tỉnh</button>
     </div>
-    <div class="tk-list" id="tkList">
-      <div class="tk-loading">⏳ Đang tải...</div>
-    </div>
+    <div class="tk-list" id="tkList"><div class="tk-loading">⏳ Đang tải...</div></div>
     <button class="btn-show-more" id="btnShowMore" style="display:none" onclick="showMoreTop()">
       <i class="fa-solid fa-chevron-down"></i> Xem thêm
     </button>
@@ -292,29 +484,45 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     <div id="resultContent"></div>
   </div>
 
+  <!-- PHÂN BỐ ĐIỂM -->
+  <div class="dist-card" id="distCard" style="display:none">
+    <div class="dist-header">
+      <span style="font-size:22px">📊</span>
+      <span class="dist-title">Phân Bố Điểm</span>
+      <span id="distKhoiLabel" style="font-size:13px;color:#888;margin-left:4px"></span>
+    </div>
+    <div class="dist-scope-row">
+      <button class="dist-scope-btn active" onclick="setDistScope('quoc_gia',this)">🌍 Toàn quốc</button>
+      <button class="dist-scope-btn" id="btnDistMien" onclick="setDistScope('mien',this)">📍 Theo miền</button>
+      <button class="dist-scope-btn" id="btnDistTinh" onclick="setDistScope('tinh',this)">🏙️ Trong tỉnh</button>
+    </div>
+    <div class="dist-chart-wrap"><canvas id="distChart"></canvas></div>
+    <div class="dist-my-score" id="distMyScore" style="display:none">
+      <div style="font-size:22px">📍</div>
+      <div>
+        <div class="dms-text" id="distMyScoreText"></div>
+        <div class="dms-sub" id="distMyScoreSub"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="footer">Dữ liệu từ Bộ GD&ĐT • AI nhận xét mang tính tham khảo</div>
 </div>
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────
 const API = "https://thpt-api-production.up.railway.app/api/thpt";
+
+// ABBANK config - tự điền
+const ABBANK_CONFIG = { PHONE: "", NAME: "", NOI_DUNG: "" };
+
+const COMPARE_COLORS = ["#7c3aed","#f72585","#16a34a","#f59e0b","#0284c7"];
 
 function escHtml(s) {
   if (s == null) return "";
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
 
-// ── SIDEBAR ──────────────────────────────────────────────
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("show");
-}
-function closeSidebar() {
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("overlay").classList.remove("show");
-}
-
-// ── TỔ HỢP MÔN ──────────────────────────────────────────
+// ── TỔ HỢP ──────────────────────────────────────────────
 const TO_HOP = {
   A00:{mon:["toan","li","hoa"],label:"Toán - Lý - Hóa"},
   A01:{mon:["toan","li","nn"],label:"Toán - Lý - NN"},
@@ -347,350 +555,568 @@ const MON_LABEL = {
   su:"Lịch sử",dia:"Địa lí",gdkt:"GD KT&PL",nn:"Ngoại ngữ",
 };
 
+const MIEN_LABEL = {bac:"Bắc",trung:"Trung",nam:"Nam"};
+const MIEN_FULL  = {bac:"Miền Bắc",trung:"Miền Trung",nam:"Miền Nam"};
+
 // ── STATE ────────────────────────────────────────────────
-let currentData   = null;
-let selectedKhoi  = null;  // null = xem tất cả môn, string = mã khối
-let tkScope       = "quoc_gia";
-let tkMaTinh      = null;
-let tkMien        = null;
-let topData       = [];
-let topShown      = 10;
-const TOP_STEP    = 10;
-const TOP_MAX     = 100;
+let currentData  = null;
+let selectedKhoi = null;
+let tkScope      = "quoc_gia";
+let tkMaTinh     = null;
+let tkMien       = null;
+let topData      = [];
+let topShown     = 10;
+let distScope    = "quoc_gia";
+let distChart    = null;
+let distMyTong   = null;
+let cmChart      = null;
+const TOP_STEP   = 10;
+const TOP_MAX    = 100;
+
+// ── SIDEBAR ──────────────────────────────────────────────
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+function closeSidebar(){
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+// ── DONATE ───────────────────────────────────────────────
+let dmSelectedCoffees = 1;
+function openDonate(){ closeSidebar(); dmBackToStep1(); document.getElementById("donateOverlay").classList.add("show"); document.body.style.overflow="hidden"; }
+function closeDonate(){ document.getElementById("donateOverlay").classList.remove("show"); document.body.style.overflow=""; }
+function closeDonateOutside(e){ if(e.target===document.getElementById("donateOverlay")) closeDonate(); }
+function selectCoffee(cups,amount,el){
+  dmSelectedCoffees=cups;
+  document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("dmAmount").value=amount;
+  document.getElementById("dmMinNote").classList.remove("show");
+}
+function onDmInput(){
+  document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));
+  dmSelectedCoffees=0;
+  const val=parseInt(document.getElementById("dmAmount").value);
+  document.getElementById("dmMinNote").classList.toggle("show",val>0&&val<5000);
+}
+function genDonateQR(){
+  const val=parseInt(document.getElementById("dmAmount").value);
+  if(!val||val<5000){ document.getElementById("dmMinNote").classList.add("show"); return; }
+  const {PHONE,NAME,NOI_DUNG}=ABBANK_CONFIG;
+  const desc=encodeURIComponent(NOI_DUNG||"Cam on ban da ung ho!");
+  // ABBANK mã ngân hàng: 970425
+  const qrUrl=`https://api.vietqr.io/image/970425-${PHONE}-NKNPGUv.jpg?accountName=${encodeURIComponent(NAME)}&amount=${val}&addInfo=${desc}`;
+  document.getElementById("dmQRAmount").textContent=val.toLocaleString("vi-VN")+"đ";
+  document.getElementById("dmQRImg").src=qrUrl;
+  document.getElementById("dmBankInfo").innerHTML=
+    `🏦 Ngân hàng: <strong>ABBANK</strong><br>💳 Số TK: <strong>${escHtml(PHONE)}</strong><br>👤 Tên: <strong>${escHtml(NAME)}</strong><br>📝 Nội dung: <strong>${escHtml(NOI_DUNG||"Cam on ban da ung ho!")}</strong>`;
+  document.getElementById("dmStep1").style.display="none";
+  document.getElementById("dmStep2").classList.add("show");
+}
+function dmBackToStep1(){
+  document.getElementById("dmStep1").style.display="block";
+  document.getElementById("dmStep2").classList.remove("show");
+  document.getElementById("dmAmount").value="";
+  document.getElementById("dmMinNote").classList.remove("show");
+  document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));
+  dmSelectedCoffees=1;
+}
+
+// ── COMPARE ──────────────────────────────────────────────
+function openCompare(){
+  closeSidebar();
+  document.getElementById("compareOverlay").classList.add("show");
+  document.body.style.overflow="hidden";
+  const list=document.getElementById("cmSbdList");
+  list.innerHTML="";
+  document.getElementById("cmResults").classList.remove("show");
+  document.getElementById("cmError").classList.remove("show");
+  if(cmChart){cmChart.destroy();cmChart=null;}
+  addCmRow(); addCmRow();
+  updateCmAddBtn();
+  // Pre-fill SBD hiện tại nếu có
+  if(currentData){
+    const inputs=document.querySelectorAll(".cm-sbd-input");
+    if(inputs[0]) inputs[0].value=currentData.sbd;
+  }
+}
+function closeCompare(){ document.getElementById("compareOverlay").classList.remove("show"); document.body.style.overflow=""; }
+function closeCompareOutside(e){ if(e.target===document.getElementById("compareOverlay")) closeCompare(); }
+
+function addCmRow(){
+  const list=document.getElementById("cmSbdList");
+  const idx=list.children.length;
+  if(idx>=5) return;
+  const color=COMPARE_COLORS[idx];
+  const row=document.createElement("div");
+  row.className="cm-sbd-row";
+  row.innerHTML=`
+    <div class="cm-sbd-dot" style="background:${color}"></div>
+    <input class="cm-sbd-input" type="text" placeholder="SBD thứ ${idx+1}..." maxlength="10">
+    <button class="cm-remove-btn" onclick="removeCmRow(this)" title="Xóa"><i class="fa-solid fa-xmark"></i></button>`;
+  row.querySelector("input").addEventListener("keydown",e=>{if(e.key==="Enter")runCompare();});
+  list.appendChild(row);
+  updateCmAddBtn();
+}
+function compareAddRow(){ addCmRow(); document.querySelectorAll(".cm-sbd-input")[document.getElementById("cmSbdList").children.length-1]?.focus(); }
+function removeCmRow(btn){
+  const list=document.getElementById("cmSbdList");
+  if(list.children.length<=2) return;
+  btn.closest(".cm-sbd-row").remove();
+  Array.from(list.children).forEach((row,i)=>{
+    row.querySelector(".cm-sbd-dot").style.background=COMPARE_COLORS[i];
+    row.querySelector("input").placeholder=`SBD thứ ${i+1}...`;
+  });
+  updateCmAddBtn();
+}
+function updateCmAddBtn(){ document.getElementById("cmAddBtn").disabled=document.getElementById("cmSbdList").children.length>=5; }
+
+async function runCompare(){
+  const khoi=document.getElementById("cmKhoiSelect").value;
+  const info=TO_HOP[khoi];
+  const sbds=[...document.querySelectorAll(".cm-sbd-input")].map(i=>i.value.trim()).filter(Boolean);
+  if(sbds.length<2){ showCmError("Nhập ít nhất 2 SBD!"); return; }
+
+  document.getElementById("cmError").classList.remove("show");
+  document.getElementById("cmResults").classList.remove("show");
+
+  const results=[], notFound=[];
+  for(const sbd of sbds){
+    try{
+      const r=await fetch(`${API}/${sbd}`);
+      if(r.ok){ const d=await r.json(); results.push(d); }
+      else notFound.push(sbd);
+    } catch{ notFound.push(sbd); }
+  }
+
+  if(notFound.length) showCmError(`Không tìm thấy SBD: ${notFound.join(", ")}`);
+  if(results.length<2){ showCmError("Cần ít nhất 2 SBD hợp lệ!"); return; }
+
+  renderCompare(results, khoi, info);
+}
+
+function showCmError(msg){ const el=document.getElementById("cmError"); el.textContent="⚠️ "+msg; el.classList.add("show"); }
+
+function renderCompare(list, khoi, info){
+  const resultsEl=document.getElementById("cmResults");
+  resultsEl.classList.add("show");
+
+  // Chart
+  const labels=info.mon.map(m=>MON_LABEL[m]);
+  labels.push("Tổng");
+  const datasets=list.map((d,i)=>({
+    label:`SBD ${escHtml(String(d.sbd))} (${escHtml(d.tinh)})`,
+    data:[...info.mon.map(m=>d.diem[m]??0), Math.round(info.mon.reduce((a,m)=>a+(d.diem[m]??0),0)*100)/100],
+    backgroundColor:COMPARE_COLORS[i]+"33",
+    borderColor:COMPARE_COLORS[i],
+    borderWidth:2, borderRadius:6,
+  }));
+
+  if(cmChart){cmChart.destroy();cmChart=null;}
+  const ctx=document.getElementById("cmChart").getContext("2d");
+  cmChart=new Chart(ctx,{
+    type:"bar",
+    data:{labels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:"top",labels:{font:{family:"'Be Vietnam Pro',sans-serif",size:12},padding:12}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:"'Be Vietnam Pro',sans-serif",size:12}}},
+        y:{beginAtZero:true,ticks:{font:{family:"'Be Vietnam Pro',sans-serif",size:11}}}
+      }
+    }
+  });
+
+  // Table
+  const headCols=list.map((d,i)=>`<th><span class="cm-color-dot" style="background:${COMPARE_COLORS[i]}"></span>SBD ${escHtml(String(d.sbd))}<br><small style="opacity:0.8">${escHtml(d.tinh)}</small></th>`).join("");
+  document.getElementById("cmTableHead").innerHTML=`<tr><th>Môn / Điểm</th>${headCols}</tr>`;
+
+  const fields=[
+    ...info.mon.map(m=>({key:m,label:MON_LABEL[m]})),
+    {key:"__tong__",label:`Tổng ${khoi}`},
+  ];
+  const rows=fields.map(f=>{
+    const vals=list.map(d=>{
+      if(f.key==="__tong__") return Math.round(info.mon.reduce((a,m)=>a+(d.diem[m]??0),0)*100)/100;
+      return d.diem[f.key]??null;
+    });
+    const maxV=Math.max(...vals.filter(v=>v!=null));
+    const cols=vals.map((v,i)=>{
+      if(v==null) return `<td style="color:#ccc">—</td>`;
+      const isWin=v===maxV&&vals.filter(x=>x===maxV).length===1;
+      return `<td style="font-weight:700;color:${COMPARE_COLORS[i]}">${escHtml(String(v))}${isWin?'<span class="cm-winner-badge">🏆</span>':''}</td>`;
+    }).join("");
+    return `<tr><td style="font-weight:700;color:#444">${escHtml(f.label)}</td>${cols}</tr>`;
+  }).join("");
+  document.getElementById("cmTableBody").innerHTML=rows;
+}
 
 // ── THỦ KHOA ────────────────────────────────────────────
-async function loadTop() {
-  const khoi = document.getElementById("tkKhoiSelect").value;
-  document.getElementById("tkList").innerHTML = '<div class="tk-loading">⏳ Đang tải...</div>';
-  document.getElementById("btnShowMore").style.display = "none";
-  topData  = [];
-  topShown = 10;
+async function loadTop(){
+  const khoi=document.getElementById("tkKhoiSelect").value;
+  const info=TO_HOP[khoi];
+  document.getElementById("tkList").innerHTML='<div class="tk-loading">⏳ Đang tải...</div>';
+  document.getElementById("btnShowMore").style.display="none";
+  topData=[]; topShown=10;
 
-  let url = `${API}/top?to_hop=${khoi}&scope=${tkScope}&limit=${TOP_MAX}`;
-  if (tkScope === "tinh" && tkMaTinh) url += `&ma_tinh=${tkMaTinh}`;
-  if (tkScope === "mien" && tkMien)   url += `&mien=${tkMien}`;
+  let url=`${API}/top?to_hop=${khoi}&scope=${tkScope}&limit=${TOP_MAX}`;
+  if(tkScope==="tinh"&&tkMaTinh) url+=`&ma_tinh=${tkMaTinh}`;
+  if(tkScope==="mien"&&tkMien)   url+=`&mien=${tkMien}`;
 
-  try {
-    const r = await fetch(url);
-    const j = await r.json();
-    topData = j.data || [];
-    renderTop();
-  } catch(e) {
-    document.getElementById("tkList").innerHTML =
-      '<div class="tk-loading" style="color:#ef4444">❌ Không tải được dữ liệu</div>';
+  try{
+    const r=await fetch(url);
+    const j=await r.json();
+    topData=j.data||[];
+    renderTop(info);
+  } catch{
+    document.getElementById("tkList").innerHTML='<div class="tk-loading" style="color:#ef4444">❌ Không tải được</div>';
   }
 }
 
-function renderTop() {
-  const khoi   = document.getElementById("tkKhoiSelect").value;
-  const info   = TO_HOP[khoi];
-  const medals = ["🥇","🥈","🥉"];
-  const list   = document.getElementById("tkList");
-  const shown  = topData.slice(0, topShown);
+function renderTop(info){
+  if(!info){ const khoi=document.getElementById("tkKhoiSelect").value; info=TO_HOP[khoi]; }
+  const medals=["🥇","🥈","🥉"];
+  const list=document.getElementById("tkList");
+  const shown=topData.slice(0,topShown);
 
-  list.innerHTML = shown.map((ts, i) => {
-    const cls    = i === 0 ? "rank1" : i === 1 ? "rank2" : i === 2 ? "rank3" : "rank-rest";
-    const medal  = i < 3 ? medals[i] : `<span style="font-size:14px;font-weight:800;color:#7c3aed">#${i+1}</span>`;
-    const diemTags = info.mon.map(m =>
-      `<span class="tk-diem-tag">${escHtml(MON_LABEL[m])}: ${escHtml(String(ts.diem[m] ?? "—"))}</span>`
-    ).join("");
+  list.innerHTML=shown.map((ts,i)=>{
+    const cls=i===0?"rank1":i===1?"rank2":i===2?"rank3":"rank-rest";
+    const medal=i<3?medals[i]:`<span style="font-size:13px;font-weight:800;color:#7c3aed">#${i+1}</span>`;
+    const diemTags=info.mon.map(m=>`<span class="tk-diem-tag">${escHtml(MON_LABEL[m])}: ${escHtml(String(ts.diem[m]??'—'))}</span>`).join("");
     return `
-      <div class="tk-item ${cls} pop" style="animation-delay:${Math.min(i,5)*0.08}s">
+      <div class="tk-item ${cls} pop" style="animation-delay:${Math.min(i,5)*0.07}s">
         <div class="tk-medal">${medal}</div>
         <div class="tk-info">
           <div class="tk-sbd">SBD: ${escHtml(String(ts.sbd))}</div>
           <div class="tk-tinh">📍 ${escHtml(ts.tinh)}</div>
           <div class="tk-diem-row">${diemTags}</div>
         </div>
-        <div>
+        <div style="text-align:right">
           <div class="tk-score">${escHtml(String(ts.tong))}</div>
           <div class="tk-score-label">3 môn</div>
         </div>
       </div>`;
   }).join("");
 
-  const btnMore = document.getElementById("btnShowMore");
-  if (topShown < topData.length) {
-    btnMore.style.display = "flex";
-    btnMore.innerHTML = `<i class="fa-solid fa-chevron-down"></i> Xem thêm (còn ${topData.length - topShown})`;
+  const btnMore=document.getElementById("btnShowMore");
+  if(topShown<topData.length){
+    btnMore.style.display="flex";
+    btnMore.innerHTML=`<i class="fa-solid fa-chevron-down"></i> Xem thêm (còn ${topData.length-topShown})`;
   } else {
-    btnMore.style.display = "none";
+    btnMore.style.display="none";
   }
 }
 
-function showMoreTop() {
-  topShown = Math.min(topShown + TOP_STEP, topData.length);
-  renderTop();
-}
+function showMoreTop(){ topShown=Math.min(topShown+TOP_STEP,topData.length); renderTop(); }
 
-function setTkScope(scope, btn) {
-  tkScope = scope;
-  document.querySelectorAll(".tk-scope-btn").forEach(b => b.classList.remove("active"));
+function setTkScope(scope,btn){
+  tkScope=scope;
+  document.querySelectorAll(".tk-scope-btn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-
-  // Nếu đang có kết quả tra cứu → dùng tỉnh/miền của thí sinh đó
-  if (currentData) {
-    tkMaTinh = currentData.ma_tinh;
-    tkMien   = currentData.mien;
-  }
-
-  // Nếu scope tinh/mien mà chưa có data → báo
-  if ((scope === "tinh" || scope === "mien") && !currentData) {
-    document.getElementById("tkList").innerHTML =
-      '<div class="tk-loading" style="color:#f59e0b">⚠️ Tra cứu SBD trước để xem top trong tỉnh / miền</div>';
-    document.getElementById("btnShowMore").style.display = "none";
+  if((scope==="tinh"||scope==="mien")&&!currentData){
+    document.getElementById("tkList").innerHTML='<div class="tk-loading" style="color:#f59e0b">⚠️ Tra cứu SBD trước để xem top trong tỉnh / miền</div>';
+    document.getElementById("btnShowMore").style.display="none";
     return;
+  }
+  if(currentData){ tkMaTinh=currentData.ma_tinh; tkMien=currentData.mien; }
+
+  // Update label nút miền/tỉnh
+  if(currentData){
+    document.getElementById("btnTkMien").textContent=`📍 ${MIEN_FULL[currentData.mien]||currentData.mien}`;
+    document.getElementById("btnTkTinh").textContent=`🏙️ ${currentData.tinh}`;
   }
   loadTop();
 }
 
 // ── SEARCH ───────────────────────────────────────────────
-async function search() {
-  const sbd = document.getElementById("sbdInput").value.trim();
-  if (!sbd) return;
+async function search(){
+  const sbd=document.getElementById("sbdInput").value.trim();
+  if(!sbd) return;
+  const btn=document.getElementById("btnSearch");
+  const resultCard=document.getElementById("resultCard");
+  btn.disabled=true; btn.textContent="⏳ Đang tìm...";
+  resultCard.style.display="none";
+  document.getElementById("distCard").style.display="none";
 
-  const btn        = document.getElementById("btnSearch");
-  const resultCard = document.getElementById("resultCard");
-  btn.disabled     = true;
-  btn.textContent  = "⏳ Đang tìm...";
-  resultCard.style.display = "none";
+  // Ẩn thủ khoa khi tìm kiếm
+  document.getElementById("tkCard").classList.add("hidden");
 
-  try {
-    const r = await fetch(`${API}/${sbd}`);
-    if (!r.ok) {
-      const e = await r.json();
-      showResult(`<div class="not-found">😅 ${escHtml(e.error || "Không tìm thấy SBD")}<div style="font-size:13px;color:#aaa;margin-top:6px">Kiểm tra lại số báo danh nhé!</div></div>`);
+  try{
+    const r=await fetch(`${API}/${sbd}`);
+    if(!r.ok){
+      const e=await r.json();
+      showResult(`<div class="not-found">😅 ${escHtml(e.error||"Không tìm thấy SBD")}<div style="font-size:13px;color:#aaa;margin-top:6px">Kiểm tra lại số báo danh nhé!</div></div>`);
+      // Hiện lại thủ khoa nếu không tìm thấy
+      document.getElementById("tkCard").classList.remove("hidden");
       return;
     }
-    const data   = await r.json();
-    currentData  = data;
-    selectedKhoi = null;
+    const data=await r.json();
+    currentData=data;
+    selectedKhoi=null;
+    tkMaTinh=data.ma_tinh;
+    tkMien=data.mien;
 
-    // Update top scope nếu đang xem tinh/mien
-    tkMaTinh = data.ma_tinh;
-    tkMien   = data.mien;
-    if (tkScope === "tinh" || tkScope === "mien") loadTop();
+    // Update label nút scope
+    document.getElementById("btnTkMien").textContent=`📍 ${MIEN_FULL[data.mien]||data.mien}`;
+    document.getElementById("btnTkTinh").textContent=`🏙️ ${data.tinh}`;
+    document.getElementById("btnDistMien").textContent=`📍 ${MIEN_FULL[data.mien]||data.mien}`;
+    document.getElementById("btnDistTinh").textContent=`🏙️ ${data.tinh}`;
 
+    if(tkScope==="tinh"||tkScope==="mien") loadTop();
     renderResult(data);
-  } catch(e) {
+  } catch{
     showResult(`<div class="not-found">❌ Lỗi kết nối, thử lại!</div>`);
-  } finally {
-    btn.disabled    = false;
-    btn.textContent = "🔍 Tra cứu";
+    document.getElementById("tkCard").classList.remove("hidden");
+  } finally{
+    btn.disabled=false; btn.textContent="🔍 Tra cứu";
   }
 }
 
-function showResult(html) {
-  const card = document.getElementById("resultCard");
-  document.getElementById("resultContent").innerHTML = html;
-  card.style.display = "block";
-  card.scrollIntoView({ behavior:"smooth", block:"start" });
+function showResult(html){
+  const card=document.getElementById("resultCard");
+  document.getElementById("resultContent").innerHTML=html;
+  card.style.display="block";
+  setTimeout(()=>card.scrollIntoView({behavior:"smooth",block:"start"}),100);
 }
 
-function renderResult(data) {
-  const monDaThi = data.mon_da_thi;
-
-  // Score boxes
-  const colsCls = monDaThi.length <= 2 ? "cols-2"
-                : monDaThi.length <= 3 ? "cols-3" : "cols-4";
-  const boxes = monDaThi.map(m => `
+function renderResult(data){
+  const monDaThi=data.mon_da_thi;
+  const colsCls=monDaThi.length<=2?"cols-2":monDaThi.length<=3?"cols-3":"cols-4";
+  const boxes=monDaThi.map(m=>`
     <div class="score-box ${m} pop">
       <div class="mon">${escHtml(MON_LABEL[m])}</div>
       <div class="diem">${escHtml(String(data.diem[m]))}</div>
     </div>`).join("");
 
-  // Khối selector
-  const khoiButtons = Object.entries(TO_HOP).map(([ma, info]) => {
-    const available = info.mon.every(m => monDaThi.includes(m));
-    const cls = available ? "" : "disabled-khoi";
-    const title = available ? "" : `title="Không thi: ${info.mon.filter(m=>!monDaThi.includes(m)).map(m=>MON_LABEL[m]).join(', ')}"`;
-    return `<button class="khoi-btn ${cls}" ${title}
-      onclick="${available ? `selectKhoi('${ma}')` : ''}"
-      id="khoiBtn_${ma}">${escHtml(ma)}</button>`;
+  const khoiButtons=Object.entries(TO_HOP).map(([ma,info])=>{
+    const ok=info.mon.every(m=>monDaThi.includes(m));
+    const missingLabel=ok?"":`Không thi: ${info.mon.filter(m=>!monDaThi.includes(m)).map(m=>MON_LABEL[m]).join(", ")}`;
+    return `<button class="khoi-btn${ok?"":" disabled-khoi"}" id="khoiBtn_${ma}"
+      ${ok?`onclick="selectKhoi('${ma}')"`:""} ${missingLabel?`title="${escHtml(missingLabel)}"`:""}>
+      ${escHtml(ma)}</button>`;
   }).join("");
 
-  // Tổ hợp khả dụng để hiển thị tổng mặc định
-  const firstKhoi = data.to_hop_kha_dung[0];
-
-  const html = `
+  showResult(`
     <div class="student-header">
       <div class="avatar">🎒</div>
       <div class="student-info">
         <h2>Thí sinh THPT 2026</h2>
         <div class="sbd-tag">SBD: ${escHtml(String(data.sbd))}</div>
-        <div class="tinh-tag">📍 ${escHtml(data.tinh)} • ${escHtml(data.mien_label)}</div>
+        <div class="tinh-tag">📍 ${escHtml(data.tinh)} • ${escHtml(MIEN_FULL[data.mien]||data.mien)}</div>
       </div>
     </div>
-
-    <div class="scores-grid ${colsCls}" id="scoresGrid">${boxes}</div>
-
+    <div class="scores-grid ${colsCls}">${boxes}</div>
     <div class="khoi-section">
       <div class="khoi-label"><i class="fa-solid fa-layer-group"></i> Chọn khối để tính tổng điểm & xếp hạng:</div>
       <div class="khoi-grid">${khoiButtons}</div>
     </div>
-
     <div id="tongBox"></div>
     <div id="rankBox"></div>
     <div id="aiBox"></div>
-  `;
-
-  showResult(html);
+  `);
 
   // Tự chọn khối đầu tiên khả dụng
-  if (firstKhoi) selectKhoi(firstKhoi.ma);
+  if(data.to_hop_kha_dung.length) selectKhoi(data.to_hop_kha_dung[0].ma);
 }
 
 // ── CHỌN KHỐI ───────────────────────────────────────────
-async function selectKhoi(ma) {
-  selectedKhoi = ma;
-  const info   = TO_HOP[ma];
-  const data   = currentData;
+async function selectKhoi(ma){
+  selectedKhoi=ma;
+  const info=TO_HOP[ma];
+  const data=currentData;
 
-  // Highlight button
-  document.querySelectorAll(".khoi-btn").forEach(b => b.classList.remove("active"));
-  const btn = document.getElementById(`khoiBtn_${ma}`);
-  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".khoi-btn").forEach(b=>b.classList.remove("active"));
+  const btn=document.getElementById(`khoiBtn_${ma}`);
+  if(btn) btn.classList.add("active");
 
-  // Tính tổng
-  const mons  = info.mon;
-  const diems = mons.map(m => data.diem[m]);
-  const tong  = Math.round(diems.reduce((a,b) => a+b, 0) * 100) / 100;
+  const mons=info.mon;
+  const tong=Math.round(mons.reduce((a,m)=>a+(data.diem[m]??0),0)*100)/100;
+  distMyTong=tong;
 
-  // Môn nào không có trong tổ hợp (để ghi chú)
-  const allMon    = data.mon_da_thi;
-  const notInKhoi = allMon.filter(m => !mons.includes(m));
+  const allMon=data.mon_da_thi;
+  const notInKhoi=allMon.filter(m=>!mons.includes(m));
+  const note=notInKhoi.length
+    ?`Chưa tính: ${notInKhoi.map(m=>MON_LABEL[m]).join(", ")} (không có trong khối ${ma})`:"";
 
-  let note = "";
-  if (notInKhoi.length) {
-    note = `Chưa tính: ${notInKhoi.map(m => MON_LABEL[m]).join(", ")} (không có trong khối ${ma})`;
-  }
-
-  document.getElementById("tongBox").innerHTML = `
+  document.getElementById("tongBox").innerHTML=`
     <div class="tong-box pop">
       <div class="tong-left">
         <div class="tong-label">TỔNG ĐIỂM KHỐI ${escHtml(ma)}</div>
-        <div class="tong-mon">${mons.map(m => escHtml(MON_LABEL[m])).join(" + ")}</div>
-        ${note ? `<div class="tong-note">⚠️ ${escHtml(note)}</div>` : ""}
+        <div class="tong-mon">${mons.map(m=>escHtml(MON_LABEL[m])).join(" + ")}</div>
+        ${note?`<div class="tong-note">⚠️ ${escHtml(note)}</div>`:""}
       </div>
       <div class="tong-score">${escHtml(String(tong))}</div>
     </div>`;
 
-  // Load rank
-  renderRank(ma, tong);
-  renderAI(data, ma, tong, note);
+  renderRankBox(ma);
+  renderAI(data,ma,tong,note);
+  loadDist(ma,"quoc_gia",tong);
+
+  // Reset dist scope
+  distScope="quoc_gia";
+  document.querySelectorAll(".dist-scope-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelector(".dist-scope-btn")?.classList.add("active");
+  document.getElementById("distKhoiLabel").textContent=`— Khối ${ma} (${info.label})`;
 }
 
 // ── RANK ─────────────────────────────────────────────────
-async function renderRank(khoi, tong) {
-  const rankBox = document.getElementById("rankBox");
-  rankBox.innerHTML = `
+function renderRankBox(ma){
+  const data=currentData;
+  document.getElementById("rankBox").innerHTML=`
     <div class="rank-box">
       <div class="rank-tabs">
-        <button class="rank-tab active" onclick="loadRank('${khoi}','quoc_gia',this)">🌍 Toàn quốc</button>
-        <button class="rank-tab" onclick="loadRank('${khoi}','mien',this)">📍 Miền ${escHtml(currentData.mien_label)}</button>
-        <button class="rank-tab" onclick="loadRank('${khoi}','tinh',this)">🏙️ ${escHtml(currentData.tinh)}</button>
+        <button class="rank-tab active" onclick="loadRank('${ma}','quoc_gia',this)">🌍 Toàn quốc</button>
+        <button class="rank-tab" onclick="loadRank('${ma}','mien',this)">📍 ${escHtml(MIEN_FULL[data.mien]||data.mien)}</button>
+        <button class="rank-tab" onclick="loadRank('${ma}','tinh',this)">🏙️ ${escHtml(data.tinh)}</button>
       </div>
-      <div id="rankRows"><div class="rank-loading">⏳ Đang tải xếp hạng...</div></div>
+      <div id="rankRows"><div class="rank-loading">⏳ Đang tải...</div></div>
     </div>`;
-  loadRank(khoi, "quoc_gia", document.querySelector(".rank-tab"));
+  loadRank(ma,"quoc_gia",document.querySelector(".rank-tab.active"));
 }
 
-async function loadRank(khoi, scope, btn) {
-  document.querySelectorAll(".rank-tab").forEach(b => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
-
-  const rows = document.getElementById("rankRows");
-  rows.innerHTML = '<div class="rank-loading">⏳ Đang tải...</div>';
-
-  try {
-    const r = await fetch(`${API}/rank?sbd=${currentData.sbd}&to_hop=${khoi}&scope=${scope}`);
-    const j = await r.json();
-    if (!r.ok) { rows.innerHTML = `<div class="rank-loading" style="color:#ef4444">❌ ${escHtml(j.error)}</div>`; return; }
-
-    const pct  = j.pct;
-    const icon = j.rank <= 10 ? "🏆" : j.rank <= 100 ? "🥇" : j.rank <= 500 ? "🥈" : "📊";
-    const scopeLabel = scope === "quoc_gia" ? "toàn quốc"
-                     : scope === "mien"     ? j.mien_label
-                     : j.tinh;
-
-    rows.innerHTML = `
+async function loadRank(ma,scope,btn){
+  document.querySelectorAll(".rank-tab").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  const rows=document.getElementById("rankRows");
+  rows.innerHTML='<div class="rank-loading">⏳ Đang tải...</div>';
+  try{
+    const r=await fetch(`${API}/rank?sbd=${currentData.sbd}&to_hop=${ma}&scope=${scope}`);
+    const j=await r.json();
+    if(!r.ok){ rows.innerHTML=`<div class="rank-loading" style="color:#ef4444">❌ ${escHtml(j.error)}</div>`; return; }
+    const icon=j.rank<=10?"🏆":j.rank<=100?"🥇":j.rank<=500?"🥈":"📊";
+    const scopeLabel=scope==="quoc_gia"?"toàn quốc":scope==="mien"?MIEN_FULL[j.mien]:j.tinh;
+    rows.innerHTML=`
       <div class="rank-row">
         <div class="rank-icon">${icon}</div>
         <div>
           <div class="rank-text">Hạng ${escHtml(String(j.rank))} / ${escHtml(String(j.total))} thí sinh ${escHtml(scopeLabel)}</div>
-          <div class="rank-sub">Cao hơn ${escHtml(String(pct))}% thí sinh thi khối ${escHtml(khoi)} 📈</div>
+          <div class="rank-sub">Cao hơn ${escHtml(String(j.pct))}% thí sinh thi khối ${escHtml(ma)} 📈</div>
         </div>
       </div>`;
-  } catch(e) {
-    rows.innerHTML = '<div class="rank-loading" style="color:#ef4444">❌ Lỗi kết nối</div>';
+  } catch{
+    rows.innerHTML='<div class="rank-loading" style="color:#ef4444">❌ Lỗi kết nối</div>';
   }
 }
 
+// ── PHÂN BỐ ĐIỂM ────────────────────────────────────────
+async function loadDist(ma,scope,myTong){
+  if(myTong!==undefined) distMyTong=myTong;
+  distScope=scope;
+  const card=document.getElementById("distCard");
+  card.style.display="block";
+
+  let url=`${API}/dist?to_hop=${ma}&scope=${scope}`;
+  if(scope==="tinh"&&currentData) url+=`&ma_tinh=${currentData.ma_tinh}`;
+  if(scope==="mien"&&currentData) url+=`&mien=${currentData.mien}`;
+
+  try{
+    const r=await fetch(url);
+    if(!r.ok){ renderDistFallback(ma,scope); return; }
+    const j=await r.json();
+    renderDistChart(j.bins, distMyTong);
+  } catch{ renderDistFallback(ma,scope); }
+}
+
+async function renderDistFallback(ma,scope){
+  // Endpoint dist chưa có → dùng top để ước lượng phân bố
+  // Chỉ hiển thị placeholder
+  const card=document.getElementById("distCard");
+  card.style.display="none";
+}
+
+function renderDistChart(bins, myTong){
+  const labels=bins.map(b=>b.range);
+  const counts=bins.map(b=>b.count);
+  const bgColors=labels.map(lbl=>{
+    if(myTong==null) return "#7c3aed55";
+    const parts=lbl.split("–");
+    const lo=parseFloat(parts[0]),hi=parseFloat(parts[1]);
+    return (myTong>=lo&&myTong<hi)?"#f59e0b":"#7c3aed55";
+  });
+  const borderColors=bgColors.map(c=>c==="#f59e0b"?"#f59e0b":"#7c3aed");
+
+  if(distChart){distChart.destroy();distChart=null;}
+  const ctx=document.getElementById("distChart").getContext("2d");
+  distChart=new Chart(ctx,{
+    type:"bar",
+    data:{labels,datasets:[{label:"Số thí sinh",data:counts,backgroundColor:bgColors,borderColor:borderColors,borderWidth:1.5,borderRadius:4}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>`Điểm: ${c[0].label}`,label:c=>` ${c.parsed.y.toLocaleString("vi-VN")} thí sinh`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:"'Be Vietnam Pro',sans-serif",size:10},maxRotation:45}},
+        y:{ticks:{font:{family:"'Be Vietnam Pro',sans-serif",size:11}},grid:{color:"#f0f0f0"}}
+      }
+    }
+  });
+
+  // My score indicator
+  const myEl=document.getElementById("distMyScore");
+  if(myTong!=null){
+    const total=counts.reduce((a,b)=>a+b,0);
+    const above=counts.reduce((s,c,i)=>s+(parseFloat(labels[i].split("–")[0])>myTong?c:0),0);
+    const pct=Math.round(above/total*100);
+    myEl.style.display="flex";
+    document.getElementById("distMyScoreText").textContent=`📍 Điểm của bạn: ${myTong}`;
+    document.getElementById("distMyScoreSub").textContent=`Cao hơn khoảng ${pct}% thí sinh trong nhóm này`;
+  } else {
+    myEl.style.display="none";
+  }
+}
+
+function setDistScope(scope,btn){
+  distScope=scope;
+  document.querySelectorAll(".dist-scope-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  if(selectedKhoi) loadDist(selectedKhoi,scope,distMyTong);
+}
+
 // ── AI ───────────────────────────────────────────────────
-async function renderAI(data, khoi, tong, note) {
-  const aiBox = document.getElementById("aiBox");
-  if (!aiBox) return;
-  aiBox.innerHTML = `
+async function renderAI(data,ma,tong,note){
+  const aiBox=document.getElementById("aiBox");
+  if(!aiBox) return;
+  aiBox.innerHTML=`
     <div class="ai-box">
       <div class="ai-label">🤖 AI NHẬN XÉT</div>
       <div class="ai-text" id="aiText">
         <div class="ai-typing"><span></span><span></span><span></span></div>
       </div>
     </div>`;
+  const info=TO_HOP[ma];
+  const monStr=info.mon.map(m=>`${MON_LABEL[m]}: ${data.diem[m]}`).join(", ");
+  const allStr=data.mon_da_thi.map(m=>`${MON_LABEL[m]}: ${data.diem[m]}`).join(", ");
+  const prompt=`Bạn là AI cà khịa GenZ nhưng vẫn động viên học sinh vừa tra điểm thi THPT 2026.
 
-  const info   = TO_HOP[khoi];
-  const monStr = info.mon.map(m => `${MON_LABEL[m]}: ${data.diem[m]}`).join(", ");
-  const allStr = data.mon_da_thi.map(m => `${MON_LABEL[m]}: ${data.diem[m]}`).join(", ");
+Thí sinh SBD ${data.sbd} tỉnh ${data.tinh} (${MIEN_FULL[data.mien]||data.mien}):
+Điểm tất cả môn: ${allStr}
+Khối chọn: ${ma} (${info.label})
+Điểm khối: ${monStr}
+Tổng 3 môn: ${tong}
+${note?`Lưu ý: ${note}`:""}
 
-  const prompt = `Bạn là AI cà khịa GenZ nhưng vẫn động viên học sinh vừa tra điểm thi THPT 2026.
-
-Thí sinh SBD ${data.sbd} tỉnh ${data.tinh} (${data.mien_label}):
-Điểm tất cả môn đã thi: ${allStr}
-Khối đã chọn: ${khoi} (${info.label})
-Điểm khối ${khoi}: ${monStr}
-Tổng điểm 3 môn: ${tong}
-${note ? `Lưu ý: ${note}` : ""}
-
-Hãy viết 3-4 câu: cà khịa hài hước GenZ nhưng có động viên, nhận xét điểm từng môn trong khối, nhận xét tổng điểm, chúc mừng hoặc an ủi. Dùng tiếng Việt tự nhiên, có emoji. KHÔNG dùng markdown.`;
-
-  try {
-    const res = await fetch("/api/ai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages:[{role:"user",content:prompt}], max_tokens:500 }),
-    });
-
-    if (!res.ok) {
-      document.getElementById("aiText").textContent = "😅 AI đang bận, thử lại sau nhé!";
-      return;
-    }
-
-    const reader  = res.body.getReader();
-    const decoder = new TextDecoder();
-    const aiEl    = document.getElementById("aiText");
-    aiEl.innerHTML = "";
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith("data: ")) continue;
-        const d = line.slice(6).trim();
-        if (d === "[DONE]") break;
-        try {
-          const chunk = JSON.parse(d).choices?.[0]?.delta?.content ?? "";
-          aiEl.textContent += chunk;
-        } catch {}
+Viết 3-4 câu: cà khịa hài hước GenZ nhưng động viên, nhận xét điểm từng môn trong khối, nhận xét tổng điểm, chúc mừng hoặc an ủi. Tiếng Việt tự nhiên, có emoji. KHÔNG dùng markdown.`;
+  try{
+    const res=await fetch("/api/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:prompt}],max_tokens:500})});
+    if(!res.ok){ document.getElementById("aiText").textContent="😅 AI đang bận, thử lại sau!"; return; }
+    const reader=res.body.getReader(),decoder=new TextDecoder();
+    const aiEl=document.getElementById("aiText");
+    aiEl.innerHTML="";
+    let buf="";
+    while(true){
+      const{done,value}=await reader.read();
+      if(done) break;
+      buf+=decoder.decode(value,{stream:true});
+      const lines=buf.split("\n"); buf=lines.pop();
+      for(const line of lines){
+        if(!line.startsWith("data: ")) continue;
+        const d=line.slice(6).trim();
+        if(d==="[DONE]") break;
+        try{ aiEl.textContent+=JSON.parse(d).choices?.[0]?.delta?.content??""; }catch{}
       }
     }
-  } catch {
-    const el = document.getElementById("aiText");
-    if (el) el.textContent = "😅 AI đang bận, thử lại sau nhé!";
-  }
+  } catch{ const el=document.getElementById("aiText"); if(el) el.textContent="😅 AI đang bận, thử lại sau!"; }
 }
 
 // ── INIT ─────────────────────────────────────────────────
