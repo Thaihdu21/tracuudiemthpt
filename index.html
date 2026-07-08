@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tra Cứu Điểm Thi THPT 2026</title>
+<meta name="description" content="Tra cứu điểm thi tốt nghiệp THPT 2026. Xem điểm từng môn, xếp hạng theo khối, top thủ khoa toàn quốc.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.1);border-radius:100px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#7c3aed,#a855f7);border-radius:100px}
+
+body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#7c3aed 100%);display:flex;flex-direction:column;align-items:center;padding:30px 16px}
+.container{width:100%;max-width:720px}
+
+/* HAMBURGER */
+.hamburger-btn{position:fixed;top:16px;right:16px;z-index:1000;width:46px;height:46px;border-radius:14px;background:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,0.2);color:#7c3aed;font-size:18px;transition:all 0.3s}
+.hamburger-btn:hover{transform:scale(1.08)}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1001;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.overlay.show{opacity:1;pointer-events:all}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:white;z-index:1002;box-shadow:-8px 0 40px rgba(0,0,0,0.2);transition:right 0.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:20px 0 0 20px;overflow:hidden}
+.sidebar.open{right:0}
+.sidebar-header{background:linear-gradient(135deg,#7c3aed,#a855f7);padding:24px 20px 20px;display:flex;align-items:center;justify-content:space-between}
+.sidebar-header .sb-title{color:white;font-size:16px;font-weight:800}
+.sidebar-close{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:16px;display:flex;align-items:center;justify-content:center}
+.sidebar-body{padding:16px;flex:1;overflow-y:auto}
+.sidebar-nav-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;margin-bottom:10px;cursor:pointer;text-decoration:none;transition:all 0.2s;border:2px solid transparent;background:#f8faff}
+.sidebar-nav-item:hover{background:#f3e8ff;border-color:#7c3aed;transform:translateX(-4px)}
+.sidebar-nav-item.active{background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-color:#7c3aed}
+.sidebar-nav-item .nav-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;flex-shrink:0}
+.sidebar-nav-item .nav-label{font-size:14px;font-weight:700;color:#222}
+.sidebar-nav-item .nav-sub{font-size:12px;color:#888;margin-top:2px}
+.sidebar-section-label{font-size:11px;font-weight:700;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;padding:0 4px;margin-bottom:10px}
+.sidebar-divider{border:none;border-top:1px solid #f0f0f0;margin:6px 0 14px}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:30px;animation:fadeDown 0.6s ease}
+.header .emoji-big{font-size:60px;display:block;margin-bottom:10px}
+.header h1{color:white;font-size:26px;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,0.3);line-height:1.3}
+.header p{color:rgba(255,255,255,0.85);margin-top:8px;font-size:14px}
+
+/* STATS */
+.stats-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.5s ease}
+.stat-badge{background:rgba(255,255,255,0.15);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.25)}
+.stat-badge .stat-icon{font-size:18px}
+.stat-badge .stat-num{font-size:18px;font-weight:800;color:white;line-height:1}
+.stat-badge .stat-label{font-size:11px;color:rgba(255,255,255,0.8);margin-top:1px}
+
+/* CARD */
+.card{background:white;border-radius:24px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;animation:fadeUp 0.6s ease}
+
+/* INPUT */
+.input-group{display:flex;gap:12px;flex-wrap:wrap}
+.input-group input{flex:1;min-width:180px;padding:16px 20px;border:2.5px solid #e0e0e0;border-radius:14px;font-size:18px;font-family:inherit;font-weight:600;letter-spacing:2px;outline:none;transition:all 0.3s;color:#333}
+.input-group input:focus{border-color:#7c3aed;box-shadow:0 0 0 4px rgba(124,58,237,0.15)}
+.input-group input::placeholder{letter-spacing:0;font-weight:400;color:#aaa}
+.btn-search{padding:16px 28px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.3s;white-space:nowrap}
+.btn-search:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.5)}
+.btn-search:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+
+/* RESULT */
+.student-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:2px dashed #f0f0f0}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.student-info h2{font-size:20px;color:#222;font-weight:800}
+.student-info .sbd-tag{font-size:13px;color:#888}
+.student-info .tinh-tag{font-size:13px;color:#7c3aed;font-weight:700;margin-top:2px}
+
+/* ĐIỂM GRID */
+.scores-grid{display:grid;gap:12px;margin-bottom:20px}
+.scores-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.scores-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.scores-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.score-box{border-radius:16px;padding:16px 10px;text-align:center;transition:transform 0.2s}
+.score-box:hover{transform:translateY(-2px)}
+.score-box.toan {background:linear-gradient(135deg,#d1fae522,#a7f3d044);border:2px solid #6ee7b7}
+.score-box.van  {background:linear-gradient(135deg,#fce7f322,#f9a8d444);border:2px solid #f472b6}
+.score-box.li   {background:linear-gradient(135deg,#dbeafe22,#93c5fd44);border:2px solid #60a5fa}
+.score-box.hoa  {background:linear-gradient(135deg,#fef3c722,#fde68a44);border:2px solid #fbbf24}
+.score-box.sinh {background:linear-gradient(135deg,#d1fae522,#6ee7b744);border:2px solid #34d399}
+.score-box.tin  {background:linear-gradient(135deg,#ede9fe22,#c4b5fd44);border:2px solid #a78bfa}
+.score-box.su   {background:linear-gradient(135deg,#fee2e222,#fca5a544);border:2px solid #f87171}
+.score-box.dia  {background:linear-gradient(135deg,#ffedd522,#fdba7444);border:2px solid #fb923c}
+.score-box.gdkt {background:linear-gradient(135deg,#f0fdf422,#bbf7d044);border:2px solid #4ade80}
+.score-box.nn   {background:linear-gradient(135deg,#e0f2fe22,#7dd3fc44);border:2px solid #38bdf8}
+.score-box.cncn {background:linear-gradient(135deg,#fdf4ff22,#e879f944);border:2px solid #d946ef}
+.score-box.cnnn {background:linear-gradient(135deg,#f0fdf422,#86efac44);border:2px solid #4ade80}
+.score-box .mon {font-size:11px;font-weight:700;color:#666;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.score-box .diem{font-size:30px;font-weight:800;color:#333;line-height:1}
+.score-box.toan .diem{color:#059669}
+.score-box.van  .diem{color:#db2777}
+.score-box.li   .diem{color:#2563eb}
+.score-box.hoa  .diem{color:#d97706}
+.score-box.sinh .diem{color:#059669}
+.score-box.tin  .diem{color:#7c3aed}
+.score-box.su   .diem{color:#dc2626}
+.score-box.dia  .diem{color:#ea580c}
+.score-box.gdkt .diem{color:#16a34a}
+.score-box.nn   .diem{color:#0284c7}
+
+/* KHỐI SELECTOR */
+.khoi-section{margin-bottom:20px}
+.khoi-label{font-size:13px;font-weight:700;color:#666;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.khoi-grid{display:flex;flex-wrap:wrap;gap:8px}
+.khoi-btn{padding:8px 14px;border-radius:20px;border:2px solid #e0e0e0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#666;transition:all 0.2s}
+.khoi-btn:hover{border-color:#7c3aed;color:#7c3aed}
+.khoi-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent}
+.khoi-btn.disabled-khoi{opacity:0.35;cursor:not-allowed;text-decoration:line-through}
+
+/* TỔNG ĐIỂM */
+.tong-box{background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:16px;padding:20px 24px;margin-bottom:20px;color:white;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.tong-box .tong-left .tong-label{font-size:12px;font-weight:700;opacity:0.85;letter-spacing:1px;margin-bottom:4px}
+.tong-box .tong-left .tong-mon{font-size:13px;opacity:0.75}
+.tong-box .tong-left .tong-note{font-size:11px;opacity:0.65;margin-top:6px;font-style:italic}
+.tong-box .tong-score{font-size:48px;font-weight:800;flex-shrink:0;line-height:1}
+
+/* RANK */
+.rank-box{background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:16px;padding:16px 20px;margin-bottom:20px}
+.rank-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.rank-tab{padding:7px 16px;border-radius:20px;border:2px solid #fbbf24;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#92400e;transition:all 0.2s}
+.rank-tab.active{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:white;border-color:transparent}
+.rank-rows{display:flex;flex-direction:column;gap:10px}
+.rank-row{display:flex;align-items:center;gap:14px}
+.rank-row .rank-icon{font-size:28px;width:36px;text-align:center;flex-shrink:0}
+.rank-row .rank-text{font-size:15px;font-weight:700;color:#92400e}
+.rank-row .rank-sub{font-size:13px;color:#b45309;margin-top:2px}
+.rank-loading{text-align:center;color:#b45309;font-size:14px;padding:10px}
+
+/* AI BOX */
+.ai-box{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:16px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden}
+.ai-box::before{content:'🤖';position:absolute;right:-10px;top:-10px;font-size:80px;opacity:0.08}
+.ai-box .ai-label{font-size:11px;color:#a78bfa;font-weight:700;letter-spacing:2px;margin-bottom:10px}
+.ai-box .ai-text{color:#e2e8f0;font-size:15px;line-height:1.8}
+.ai-typing{display:flex;gap:6px;align-items:center;padding:10px 0}
+.ai-typing span{width:8px;height:8px;border-radius:50%;background:#a78bfa;animation:typing 1.2s infinite}
+.ai-typing span:nth-child(2){animation-delay:0.2s}
+.ai-typing span:nth-child(3){animation-delay:0.4s}
+
+/* THỦ KHOA */
+.tk-card{background:white;border-radius:24px;padding:24px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;animation:fadeUp 0.6s ease}
+.tk-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.tk-title{font-size:16px;font-weight:800;color:#333}
+.tk-khoi-select{margin-left:auto;padding:7px 14px;border:2px solid #7c3aed;border-radius:20px;font-size:13px;font-weight:700;color:#7c3aed;background:white;font-family:inherit;cursor:pointer;outline:none;transition:all 0.2s}
+.tk-khoi-select:hover{background:#7c3aed;color:white}
+.tk-scope-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tk-scope-btn{padding:6px 14px;border-radius:20px;border:2px solid #e0e0e0;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#666;transition:all 0.2s}
+.tk-scope-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent}
+.tk-list{display:flex;flex-direction:column;gap:10px}
+.tk-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;transition:transform 0.2s;cursor:default}
+.tk-item:hover{transform:translateX(4px)}
+.tk-item.rank1{background:linear-gradient(135deg,#fff8e1,#ffe082);border:2px solid #ffd54f}
+.tk-item.rank2{background:linear-gradient(135deg,#f5f5f5,#e0e0e0);border:2px solid #bdbdbd}
+.tk-item.rank3{background:linear-gradient(135deg,#fbe9e7,#ffccbc);border:2px solid #ffab91}
+.tk-item.rank-rest{background:#f8faff;border:2px solid #e8f0ff}
+.tk-medal{font-size:26px;flex-shrink:0;width:36px;text-align:center}
+.tk-info{flex:1;min-width:0}
+.tk-info .tk-sbd{font-size:12px;color:#888;font-weight:600}
+.tk-info .tk-tinh{font-size:13px;font-weight:700;color:#444;margin-top:2px}
+.tk-info .tk-diem-row{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.tk-info .tk-diem-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.7);color:#555}
+.tk-score{font-size:24px;font-weight:800;color:#7c3aed;flex-shrink:0}
+.tk-score-label{font-size:11px;color:#aaa;text-align:right;margin-top:2px}
+.btn-show-more{width:100%;padding:12px;border:2px dashed #7c3aed;border-radius:14px;background:white;color:#7c3aed;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.2s;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-show-more:hover{background:#f3e8ff}
+.tk-loading{text-align:center;color:#aaa;padding:20px;font-size:14px}
+
+/* NOT FOUND */
+.not-found{text-align:center;padding:24px;color:#ef4444;font-weight:700;font-size:15px}
+
+/* FOOTER */
+.footer{text-align:center;color:rgba(255,255,255,0.5);font-size:12px;margin-top:10px}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  body{padding:20px 12px}
+  .header h1{font-size:20px}
+  .card{padding:18px 16px}
+  .input-group{flex-direction:column}
+  .scores-grid.cols-4{grid-template-columns:repeat(2,1fr)}
+  .scores-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .score-box .diem{font-size:24px}
+  .tong-box .tong-score{font-size:36px}
+  .sidebar{width:290px}
+  .tk-card{padding:18px 16px}
+}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+@keyframes pop{0%{transform:scale(0.8);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.pop{animation:pop 0.4s ease forwards}
+</style>
+</head>
+<body>
+
+<button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sb-title">📚 Điều hướng</span>
+    <button class="sidebar-close" onclick="closeSidebar()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="sidebar-body">
+    <div class="sidebar-section-label">Danh mục</div>
+    <a class="sidebar-nav-item active" href="/">
+      <div class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div><div class="nav-label">Tra cứu điểm THPT</div><div class="nav-sub">Trang chủ — Nhập SBD</div></div>
+    </a>
+    <hr class="sidebar-divider">
+    <div class="sidebar-section-label">Thông tin</div>
+    <div style="padding:8px 4px;font-size:12px;color:#aaa;line-height:2">
+      📅 Kỳ thi: Tốt nghiệp THPT 2026<br>
+      🌍 Phạm vi: Toàn quốc<br>
+      👥 Thí sinh: 1.208.859<br>
+      📌 Nguồn: Bộ GD&ĐT
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <span class="emoji-big">🎓</span>
+    <h1>Tra Cứu Điểm Thi<br>Tốt Nghiệp THPT 2026</h1>
+    <p>Nhập SBD để xem điểm từng môn + xếp hạng toàn quốc 👇</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-badge">
+      <span class="stat-icon">👥</span>
+      <div><div class="stat-num">1.208.859</div><div class="stat-label">Thí sinh</div></div>
+    </div>
+    <div class="stat-badge">
+      <span class="stat-icon">🏫</span>
+      <div><div class="stat-num">34</div><div class="stat-label">Tỉnh / Thành phố</div></div>
+    </div>
+    <div class="stat-badge">
+      <span class="stat-icon">📚</span>
+      <div><div class="stat-num">12</div><div class="stat-label">Môn thi</div></div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="card">
+    <div class="input-group">
+      <input type="text" id="sbdInput" placeholder="Nhập số báo danh..."
+        maxlength="10" onkeydown="if(event.key==='Enter') search()">
+      <button class="btn-search" id="btnSearch" onclick="search()">
+        🔍 Tra cứu
+      </button>
+    </div>
+  </div>
+
+  <!-- THỦ KHOA -->
+  <div class="tk-card" id="tkCard">
+    <div class="tk-header">
+      <span style="font-size:22px">🏆</span>
+      <span class="tk-title">Top Thủ Khoa 2026</span>
+      <select class="tk-khoi-select" id="tkKhoiSelect" onchange="loadTop()">
+        <option value="D01">D01 — Văn+Toán+NN</option>
+        <option value="A00">A00 — Toán+Lý+Hóa</option>
+        <option value="A01">A01 — Toán+Lý+NN</option>
+        <option value="B00">B00 — Toán+Hóa+Sinh</option>
+        <option value="C00">C00 — Văn+Sử+Địa</option>
+        <option value="A07">A07 — Toán+Sử+Địa</option>
+        <option value="D09">D09 — Toán+Sử+NN</option>
+        <option value="D10">D10 — Toán+Địa+NN</option>
+      </select>
+    </div>
+    <div class="tk-scope-row">
+      <button class="tk-scope-btn active" onclick="setTkScope('quoc_gia',this)">🌍 Toàn quốc</button>
+      <button class="tk-scope-btn" onclick="setTkScope('mien',this)" id="btnTkMien">📍 Theo miền</button>
+      <button class="tk-scope-btn" onclick="setTkScope('tinh',this)" id="btnTkTinh">🏙️ Trong tỉnh</button>
+    </div>
+    <div class="tk-list" id="tkList">
+      <div class="tk-loading">⏳ Đang tải...</div>
+    </div>
+    <button class="btn-show-more" id="btnShowMore" style="display:none" onclick="showMoreTop()">
+      <i class="fa-solid fa-chevron-down"></i> Xem thêm
+    </button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card" id="resultCard" style="display:none">
+    <div id="resultContent"></div>
+  </div>
+
+  <div class="footer">Dữ liệu từ Bộ GD&ĐT • AI nhận xét mang tính tham khảo</div>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────
+const API = "https://thpt-api-production.up.railway.app/api/thpt";
+
+function escHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+// ── TỔ HỢP MÔN ──────────────────────────────────────────
+const TO_HOP = {
+  A00:{mon:["toan","li","hoa"],label:"Toán - Lý - Hóa"},
+  A01:{mon:["toan","li","nn"],label:"Toán - Lý - NN"},
+  A02:{mon:["toan","li","sinh"],label:"Toán - Lý - Sinh"},
+  A03:{mon:["toan","li","su"],label:"Toán - Lý - Sử"},
+  A04:{mon:["toan","li","dia"],label:"Toán - Lý - Địa"},
+  A07:{mon:["toan","su","dia"],label:"Toán - Sử - Địa"},
+  B00:{mon:["toan","hoa","sinh"],label:"Toán - Hóa - Sinh"},
+  B03:{mon:["toan","van","sinh"],label:"Toán - Văn - Sinh"},
+  B08:{mon:["toan","sinh","nn"],label:"Toán - Sinh - NN"},
+  C00:{mon:["van","su","dia"],label:"Văn - Sử - Địa"},
+  C01:{mon:["van","toan","li"],label:"Văn - Toán - Lý"},
+  C02:{mon:["van","toan","hoa"],label:"Văn - Toán - Hóa"},
+  C03:{mon:["van","toan","su"],label:"Văn - Toán - Sử"},
+  C04:{mon:["van","toan","dia"],label:"Văn - Toán - Địa"},
+  C14:{mon:["van","toan","gdkt"],label:"Văn - Toán - GDKT"},
+  D01:{mon:["van","toan","nn"],label:"Văn - Toán - NN"},
+  D07:{mon:["toan","hoa","nn"],label:"Toán - Hóa - NN"},
+  D08:{mon:["toan","sinh","nn"],label:"Toán - Sinh - NN"},
+  D09:{mon:["toan","su","nn"],label:"Toán - Sử - NN"},
+  D10:{mon:["toan","dia","nn"],label:"Toán - Địa - NN"},
+  D14:{mon:["van","su","nn"],label:"Văn - Sử - NN"},
+  D15:{mon:["van","dia","nn"],label:"Văn - Địa - NN"},
+  D66:{mon:["van","gdkt","nn"],label:"Văn - GDKT - NN"},
+};
+
+const MON_LABEL = {
+  toan:"Toán",van:"Ngữ văn",li:"Vật lí",hoa:"Hóa học",
+  sinh:"Sinh học",tin:"Tin học",cncn:"CN CN",cnnn:"CN NN",
+  su:"Lịch sử",dia:"Địa lí",gdkt:"GD KT&PL",nn:"Ngoại ngữ",
+};
+
+// ── STATE ────────────────────────────────────────────────
+let currentData   = null;
+let selectedKhoi  = null;  // null = xem tất cả môn, string = mã khối
+let tkScope       = "quoc_gia";
+let tkMaTinh      = null;
+let tkMien        = null;
+let topData       = [];
+let topShown      = 10;
+const TOP_STEP    = 10;
+const TOP_MAX     = 100;
+
+// ── THỦ KHOA ────────────────────────────────────────────
+async function loadTop() {
+  const khoi = document.getElementById("tkKhoiSelect").value;
+  document.getElementById("tkList").innerHTML = '<div class="tk-loading">⏳ Đang tải...</div>';
+  document.getElementById("btnShowMore").style.display = "none";
+  topData  = [];
+  topShown = 10;
+
+  let url = `${API}/top?to_hop=${khoi}&scope=${tkScope}&limit=${TOP_MAX}`;
+  if (tkScope === "tinh" && tkMaTinh) url += `&ma_tinh=${tkMaTinh}`;
+  if (tkScope === "mien" && tkMien)   url += `&mien=${tkMien}`;
+
+  try {
+    const r = await fetch(url);
+    const j = await r.json();
+    topData = j.data || [];
+    renderTop();
+  } catch(e) {
+    document.getElementById("tkList").innerHTML =
+      '<div class="tk-loading" style="color:#ef4444">❌ Không tải được dữ liệu</div>';
+  }
+}
+
+function renderTop() {
+  const khoi   = document.getElementById("tkKhoiSelect").value;
+  const info   = TO_HOP[khoi];
+  const medals = ["🥇","🥈","🥉"];
+  const list   = document.getElementById("tkList");
+  const shown  = topData.slice(0, topShown);
+
+  list.innerHTML = shown.map((ts, i) => {
+    const cls    = i === 0 ? "rank1" : i === 1 ? "rank2" : i === 2 ? "rank3" : "rank-rest";
+    const medal  = i < 3 ? medals[i] : `<span style="font-size:14px;font-weight:800;color:#7c3aed">#${i+1}</span>`;
+    const diemTags = info.mon.map(m =>
+      `<span class="tk-diem-tag">${escHtml(MON_LABEL[m])}: ${escHtml(String(ts.diem[m] ?? "—"))}</span>`
+    ).join("");
+    return `
+      <div class="tk-item ${cls} pop" style="animation-delay:${Math.min(i,5)*0.08}s">
+        <div class="tk-medal">${medal}</div>
+        <div class="tk-info">
+          <div class="tk-sbd">SBD: ${escHtml(String(ts.sbd))}</div>
+          <div class="tk-tinh">📍 ${escHtml(ts.tinh)}</div>
+          <div class="tk-diem-row">${diemTags}</div>
+        </div>
+        <div>
+          <div class="tk-score">${escHtml(String(ts.tong))}</div>
+          <div class="tk-score-label">3 môn</div>
+        </div>
+      </div>`;
+  }).join("");
+
+  const btnMore = document.getElementById("btnShowMore");
+  if (topShown < topData.length) {
+    btnMore.style.display = "flex";
+    btnMore.innerHTML = `<i class="fa-solid fa-chevron-down"></i> Xem thêm (còn ${topData.length - topShown})`;
+  } else {
+    btnMore.style.display = "none";
+  }
+}
+
+function showMoreTop() {
+  topShown = Math.min(topShown + TOP_STEP, topData.length);
+  renderTop();
+}
+
+function setTkScope(scope, btn) {
+  tkScope = scope;
+  document.querySelectorAll(".tk-scope-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  // Nếu đang có kết quả tra cứu → dùng tỉnh/miền của thí sinh đó
+  if (currentData) {
+    tkMaTinh = currentData.ma_tinh;
+    tkMien   = currentData.mien;
+  }
+
+  // Nếu scope tinh/mien mà chưa có data → báo
+  if ((scope === "tinh" || scope === "mien") && !currentData) {
+    document.getElementById("tkList").innerHTML =
+      '<div class="tk-loading" style="color:#f59e0b">⚠️ Tra cứu SBD trước để xem top trong tỉnh / miền</div>';
+    document.getElementById("btnShowMore").style.display = "none";
+    return;
+  }
+  loadTop();
+}
+
+// ── SEARCH ───────────────────────────────────────────────
+async function search() {
+  const sbd = document.getElementById("sbdInput").value.trim();
+  if (!sbd) return;
+
+  const btn        = document.getElementById("btnSearch");
+  const resultCard = document.getElementById("resultCard");
+  btn.disabled     = true;
+  btn.textContent  = "⏳ Đang tìm...";
+  resultCard.style.display = "none";
+
+  try {
+    const r = await fetch(`${API}/${sbd}`);
+    if (!r.ok) {
+      const e = await r.json();
+      showResult(`<div class="not-found">😅 ${escHtml(e.error || "Không tìm thấy SBD")}<div style="font-size:13px;color:#aaa;margin-top:6px">Kiểm tra lại số báo danh nhé!</div></div>`);
+      return;
+    }
+    const data   = await r.json();
+    currentData  = data;
+    selectedKhoi = null;
+
+    // Update top scope nếu đang xem tinh/mien
+    tkMaTinh = data.ma_tinh;
+    tkMien   = data.mien;
+    if (tkScope === "tinh" || tkScope === "mien") loadTop();
+
+    renderResult(data);
+  } catch(e) {
+    showResult(`<div class="not-found">❌ Lỗi kết nối, thử lại!</div>`);
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = "🔍 Tra cứu";
+  }
+}
+
+function showResult(html) {
+  const card = document.getElementById("resultCard");
+  document.getElementById("resultContent").innerHTML = html;
+  card.style.display = "block";
+  card.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+function renderResult(data) {
+  const monDaThi = data.mon_da_thi;
+
+  // Score boxes
+  const colsCls = monDaThi.length <= 2 ? "cols-2"
+                : monDaThi.length <= 3 ? "cols-3" : "cols-4";
+  const boxes = monDaThi.map(m => `
+    <div class="score-box ${m} pop">
+      <div class="mon">${escHtml(MON_LABEL[m])}</div>
+      <div class="diem">${escHtml(String(data.diem[m]))}</div>
+    </div>`).join("");
+
+  // Khối selector
+  const khoiButtons = Object.entries(TO_HOP).map(([ma, info]) => {
+    const available = info.mon.every(m => monDaThi.includes(m));
+    const cls = available ? "" : "disabled-khoi";
+    const title = available ? "" : `title="Không thi: ${info.mon.filter(m=>!monDaThi.includes(m)).map(m=>MON_LABEL[m]).join(', ')}"`;
+    return `<button class="khoi-btn ${cls}" ${title}
+      onclick="${available ? `selectKhoi('${ma}')` : ''}"
+      id="khoiBtn_${ma}">${escHtml(ma)}</button>`;
+  }).join("");
+
+  // Tổ hợp khả dụng để hiển thị tổng mặc định
+  const firstKhoi = data.to_hop_kha_dung[0];
+
+  const html = `
+    <div class="student-header">
+      <div class="avatar">🎒</div>
+      <div class="student-info">
+        <h2>Thí sinh THPT 2026</h2>
+        <div class="sbd-tag">SBD: ${escHtml(String(data.sbd))}</div>
+        <div class="tinh-tag">📍 ${escHtml(data.tinh)} • ${escHtml(data.mien_label)}</div>
+      </div>
+    </div>
+
+    <div class="scores-grid ${colsCls}" id="scoresGrid">${boxes}</div>
+
+    <div class="khoi-section">
+      <div class="khoi-label"><i class="fa-solid fa-layer-group"></i> Chọn khối để tính tổng điểm & xếp hạng:</div>
+      <div class="khoi-grid">${khoiButtons}</div>
+    </div>
+
+    <div id="tongBox"></div>
+    <div id="rankBox"></div>
+    <div id="aiBox"></div>
+  `;
+
+  showResult(html);
+
+  // Tự chọn khối đầu tiên khả dụng
+  if (firstKhoi) selectKhoi(firstKhoi.ma);
+}
+
+// ── CHỌN KHỐI ───────────────────────────────────────────
+async function selectKhoi(ma) {
+  selectedKhoi = ma;
+  const info   = TO_HOP[ma];
+  const data   = currentData;
+
+  // Highlight button
+  document.querySelectorAll(".khoi-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.getElementById(`khoiBtn_${ma}`);
+  if (btn) btn.classList.add("active");
+
+  // Tính tổng
+  const mons  = info.mon;
+  const diems = mons.map(m => data.diem[m]);
+  const tong  = Math.round(diems.reduce((a,b) => a+b, 0) * 100) / 100;
+
+  // Môn nào không có trong tổ hợp (để ghi chú)
+  const allMon    = data.mon_da_thi;
+  const notInKhoi = allMon.filter(m => !mons.includes(m));
+
+  let note = "";
+  if (notInKhoi.length) {
+    note = `Chưa tính: ${notInKhoi.map(m => MON_LABEL[m]).join(", ")} (không có trong khối ${ma})`;
+  }
+
+  document.getElementById("tongBox").innerHTML = `
+    <div class="tong-box pop">
+      <div class="tong-left">
+        <div class="tong-label">TỔNG ĐIỂM KHỐI ${escHtml(ma)}</div>
+        <div class="tong-mon">${mons.map(m => escHtml(MON_LABEL[m])).join(" + ")}</div>
+        ${note ? `<div class="tong-note">⚠️ ${escHtml(note)}</div>` : ""}
+      </div>
+      <div class="tong-score">${escHtml(String(tong))}</div>
+    </div>`;
+
+  // Load rank
+  renderRank(ma, tong);
+  renderAI(data, ma, tong, note);
+}
+
+// ── RANK ─────────────────────────────────────────────────
+async function renderRank(khoi, tong) {
+  const rankBox = document.getElementById("rankBox");
+  rankBox.innerHTML = `
+    <div class="rank-box">
+      <div class="rank-tabs">
+        <button class="rank-tab active" onclick="loadRank('${khoi}','quoc_gia',this)">🌍 Toàn quốc</button>
+        <button class="rank-tab" onclick="loadRank('${khoi}','mien',this)">📍 Miền ${escHtml(currentData.mien_label)}</button>
+        <button class="rank-tab" onclick="loadRank('${khoi}','tinh',this)">🏙️ ${escHtml(currentData.tinh)}</button>
+      </div>
+      <div id="rankRows"><div class="rank-loading">⏳ Đang tải xếp hạng...</div></div>
+    </div>`;
+  loadRank(khoi, "quoc_gia", document.querySelector(".rank-tab"));
+}
+
+async function loadRank(khoi, scope, btn) {
+  document.querySelectorAll(".rank-tab").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+
+  const rows = document.getElementById("rankRows");
+  rows.innerHTML = '<div class="rank-loading">⏳ Đang tải...</div>';
+
+  try {
+    const r = await fetch(`${API}/rank?sbd=${currentData.sbd}&to_hop=${khoi}&scope=${scope}`);
+    const j = await r.json();
+    if (!r.ok) { rows.innerHTML = `<div class="rank-loading" style="color:#ef4444">❌ ${escHtml(j.error)}</div>`; return; }
+
+    const pct  = j.pct;
+    const icon = j.rank <= 10 ? "🏆" : j.rank <= 100 ? "🥇" : j.rank <= 500 ? "🥈" : "📊";
+    const scopeLabel = scope === "quoc_gia" ? "toàn quốc"
+                     : scope === "mien"     ? j.mien_label
+                     : j.tinh;
+
+    rows.innerHTML = `
+      <div class="rank-row">
+        <div class="rank-icon">${icon}</div>
+        <div>
+          <div class="rank-text">Hạng ${escHtml(String(j.rank))} / ${escHtml(String(j.total))} thí sinh ${escHtml(scopeLabel)}</div>
+          <div class="rank-sub">Cao hơn ${escHtml(String(pct))}% thí sinh thi khối ${escHtml(khoi)} 📈</div>
+        </div>
+      </div>`;
+  } catch(e) {
+    rows.innerHTML = '<div class="rank-loading" style="color:#ef4444">❌ Lỗi kết nối</div>';
+  }
+}
+
+// ── AI ───────────────────────────────────────────────────
+async function renderAI(data, khoi, tong, note) {
+  const aiBox = document.getElementById("aiBox");
+  if (!aiBox) return;
+  aiBox.innerHTML = `
+    <div class="ai-box">
+      <div class="ai-label">🤖 AI NHẬN XÉT</div>
+      <div class="ai-text" id="aiText">
+        <div class="ai-typing"><span></span><span></span><span></span></div>
+      </div>
+    </div>`;
+
+  const info   = TO_HOP[khoi];
+  const monStr = info.mon.map(m => `${MON_LABEL[m]}: ${data.diem[m]}`).join(", ");
+  const allStr = data.mon_da_thi.map(m => `${MON_LABEL[m]}: ${data.diem[m]}`).join(", ");
+
+  const prompt = `Bạn là AI cà khịa GenZ nhưng vẫn động viên học sinh vừa tra điểm thi THPT 2026.
+
+Thí sinh SBD ${data.sbd} tỉnh ${data.tinh} (${data.mien_label}):
+Điểm tất cả môn đã thi: ${allStr}
+Khối đã chọn: ${khoi} (${info.label})
+Điểm khối ${khoi}: ${monStr}
+Tổng điểm 3 môn: ${tong}
+${note ? `Lưu ý: ${note}` : ""}
+
+Hãy viết 3-4 câu: cà khịa hài hước GenZ nhưng có động viên, nhận xét điểm từng môn trong khối, nhận xét tổng điểm, chúc mừng hoặc an ủi. Dùng tiếng Việt tự nhiên, có emoji. KHÔNG dùng markdown.`;
+
+  try {
+    const res = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages:[{role:"user",content:prompt}], max_tokens:500 }),
+    });
+
+    if (!res.ok) {
+      document.getElementById("aiText").textContent = "😅 AI đang bận, thử lại sau nhé!";
+      return;
+    }
+
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    const aiEl    = document.getElementById("aiText");
+    aiEl.innerHTML = "";
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const d = line.slice(6).trim();
+        if (d === "[DONE]") break;
+        try {
+          const chunk = JSON.parse(d).choices?.[0]?.delta?.content ?? "";
+          aiEl.textContent += chunk;
+        } catch {}
+      }
+    }
+  } catch {
+    const el = document.getElementById("aiText");
+    if (el) el.textContent = "😅 AI đang bận, thử lại sau nhé!";
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────
+loadTop();
+</script>
+</body>
+</html>
