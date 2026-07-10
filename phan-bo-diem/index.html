@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phân Bố Điểm THPT 2026</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.1);border-radius:100px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#7c3aed,#a855f7);border-radius:100px}
+body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 50%,#7c3aed 100%);display:flex;flex-direction:column;align-items:center;padding:30px 16px}
+.container{width:100%;max-width:720px}
+.hamburger-btn{position:fixed;top:16px;right:16px;z-index:1000;width:46px;height:46px;border-radius:14px;background:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,0.2);color:#7c3aed;font-size:18px;transition:all 0.3s}
+.hamburger-btn:hover{transform:scale(1.08)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1001;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.overlay.show{opacity:1;pointer-events:all}
+.sidebar{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:white;z-index:1002;box-shadow:-8px 0 40px rgba(0,0,0,0.2);transition:right 0.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:20px 0 0 20px;overflow:hidden}
+.sidebar.open{right:0}
+.sidebar-header{background:linear-gradient(135deg,#7c3aed,#a855f7);padding:24px 20px 20px;display:flex;align-items:center;justify-content:space-between}
+.sidebar-header .sb-title{color:white;font-size:16px;font-weight:800}
+.sidebar-close{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:16px;display:flex;align-items:center;justify-content:center}
+.sidebar-body{padding:16px;flex:1;overflow-y:auto}
+.sidebar-nav-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;margin-bottom:10px;cursor:pointer;text-decoration:none;transition:all 0.2s;border:2px solid transparent;background:#f8faff}
+.sidebar-nav-item:hover{background:#f3e8ff;border-color:#7c3aed;transform:translateX(-4px)}
+.sidebar-nav-item.active{background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-color:#7c3aed}
+.sidebar-nav-item .nav-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;flex-shrink:0}
+.sidebar-nav-item .nav-label{font-size:14px;font-weight:700;color:#222}
+.sidebar-nav-item .nav-sub{font-size:12px;color:#888;margin-top:2px}
+.sidebar-section-label{font-size:11px;font-weight:700;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;padding:0 4px;margin-bottom:10px}
+.sidebar-divider{border:none;border-top:1px solid #f0f0f0;margin:6px 0 14px}
+.donate-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:10px;background:linear-gradient(135deg,#fff0f6,#ffe4f0);border:2px solid #f72585;cursor:pointer;transition:all 0.2s}
+.donate-banner:hover{transform:translateX(-4px)}
+.header{text-align:center;margin-bottom:30px;animation:fadeDown 0.6s ease}
+.header .emoji-big{font-size:56px;display:block;margin-bottom:10px}
+.header h1{color:white;font-size:24px;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,0.3);line-height:1.3}
+.header p{color:rgba(255,255,255,0.85);margin-top:8px;font-size:14px}
+.card{background:white;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;animation:fadeUp 0.6s ease}
+/* KHỐI PICKER */
+.khoi-picker{display:flex;flex-direction:column;gap:14px}
+.picker-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.picker-label{font-size:13px;font-weight:700;color:#555;white-space:nowrap;min-width:80px}
+.picker-select{flex:1;padding:10px 14px;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;outline:none;color:#333;transition:all 0.2s}
+.picker-select:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.12)}
+.scope-row{display:flex;gap:8px;flex-wrap:wrap}
+.scope-btn{padding:8px 16px;border-radius:20px;border:2px solid #e0e0e0;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:white;color:#666;transition:all 0.2s}
+.scope-btn.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent}
+.scope-btn:hover:not(.active){border-color:#7c3aed;color:#7c3aed}
+.btn-load{padding:12px 24px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px}
+.btn-load:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.5)}
+.btn-load:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+/* DIST CHART */
+.dist-card{background:white;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;display:none}
+.dist-card.show{display:block;animation:fadeUp 0.5s ease}
+.dist-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+.dist-card-title{font-size:16px;font-weight:800;color:#333}
+.dist-stats{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.dist-stat{background:#f8f6ff;border-radius:12px;padding:10px 16px;border:2px solid #ede9fe}
+.dist-stat .ds-label{font-size:11px;color:#888;font-weight:700;margin-bottom:2px}
+.dist-stat .ds-val{font-size:18px;font-weight:800;color:#7c3aed}
+.dist-chart-wrap{position:relative;height:280px;margin-bottom:16px}
+/* TINH RANK */
+.tinh-card{background:white;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin-bottom:20px;display:none}
+.tinh-card.show{display:block;animation:fadeUp 0.5s ease}
+.tinh-card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.tinh-card-title{font-size:16px;font-weight:800;color:#333}
+.tinh-table{width:100%;border-collapse:collapse;font-size:13px}
+.tinh-table th{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;padding:10px 12px;text-align:left;font-weight:700;font-size:12px}
+.tinh-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;color:#333}
+.tinh-table tr:last-child td{border-bottom:none}
+.tinh-table tr:nth-child(even) td{background:#f8f6ff}
+.tinh-table .rank-col{font-size:18px;text-align:center;width:40px}
+.tinh-table .tb-col{font-weight:800;color:#7c3aed;text-align:right}
+.tinh-table .max-col{font-weight:700;color:#059669;text-align:right}
+.tinh-table .count-col{color:#888;text-align:right}
+.tinh-table tbody tr:hover td{background:#f3e8ff}
+/* TOP 3 */
+.top3-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.top3-item{flex:1;min-width:180px;border-radius:16px;padding:16px;text-align:center}
+.top3-item.t1{background:linear-gradient(135deg,#fff8e1,#ffe082);border:2px solid #ffd54f}
+.top3-item.t2{background:linear-gradient(135deg,#f5f5f5,#e0e0e0);border:2px solid #bdbdbd}
+.top3-item.t3{background:linear-gradient(135deg,#fbe9e7,#ffccbc);border:2px solid #ffab91}
+.top3-item .t-medal{font-size:32px;display:block;margin-bottom:6px}
+.top3-item .t-tinh{font-size:14px;font-weight:800;color:#333}
+.top3-item .t-tb{font-size:22px;font-weight:800;color:#7c3aed;margin-top:4px}
+.top3-item .t-label{font-size:11px;color:#888;margin-top:2px}
+.loading-state{text-align:center;color:#aaa;padding:30px;font-size:14px}
+.footer{text-align:center;color:rgba(255,255,255,0.5);font-size:12px;margin-top:10px}
+@media(max-width:480px){
+  body{padding:20px 12px}
+  .header h1{font-size:20px}
+  .card{padding:18px 16px}
+  .top3-row{flex-direction:column}
+  .sidebar{width:290px}
+}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<button class="hamburger-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sb-title">📚 Điều hướng</span>
+    <button class="sidebar-close" onclick="closeSidebar()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="sidebar-body">
+    <div class="sidebar-section-label">Danh mục</div>
+    <a class="sidebar-nav-item" href="/">
+      <div class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div><div class="nav-label">Tra cứu điểm THPT</div><div class="nav-sub">Nhập SBD để xem điểm</div></div>
+    </a>
+    <a class="sidebar-nav-item active" href="/phan-bo-diem">
+      <div class="nav-icon"><i class="fa-solid fa-chart-bar"></i></div>
+      <div><div class="nav-label">Phân bố điểm</div><div class="nav-sub">Biểu đồ & xếp hạng tỉnh</div></div>
+    </a>
+    <hr class="sidebar-divider">
+    <div class="donate-banner" onclick="alert('Mở trang chính để donate!')">
+      <div style="font-size:26px">☕</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:800;color:#be185d">Mua cho mình ly cà phê?</div>
+        <div style="font-size:11px;color:#db2777;margin-top:2px">Ủng hộ để duy trì trang web 💙</div>
+      </div>
+    </div>
+    <hr class="sidebar-divider">
+    <div class="sidebar-section-label">Thông tin</div>
+    <div style="padding:8px 4px;font-size:12px;color:#aaa;line-height:2">
+      📅 Kỳ thi: Tốt nghiệp THPT 2026<br>
+      🌍 Phạm vi: Toàn quốc<br>
+      👥 Thí sinh: 1.208.859
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <span class="emoji-big">📊</span>
+    <h1>Phân Bố Điểm<br>Thi THPT 2026</h1>
+    <p>Xem phân bố điểm theo khối & xếp hạng điểm trung bình các tỉnh</p>
+  </div>
+
+  <!-- PICKER -->
+  <div class="card">
+    <div class="khoi-picker">
+      <div class="picker-row">
+        <span class="picker-label">Khối thi:</span>
+        <select class="picker-select" id="khoiSelect">
+          <option value="D01">D01 — Văn + Toán + Ngoại ngữ</option>
+          <option value="A00">A00 — Toán + Lý + Hóa</option>
+          <option value="A01">A01 — Toán + Lý + Ngoại ngữ</option>
+          <option value="A02">A02 — Toán + Lý + Sinh</option>
+          <option value="A07">A07 — Toán + Sử + Địa</option>
+          <option value="B00">B00 — Toán + Hóa + Sinh</option>
+          <option value="B03">B03 — Toán + Văn + Sinh</option>
+          <option value="C00">C00 — Văn + Sử + Địa</option>
+          <option value="C03">C03 — Văn + Toán + Sử</option>
+          <option value="C04">C04 — Văn + Toán + Địa</option>
+          <option value="C14">C14 — Văn + Toán + GDKT</option>
+          <option value="D07">D07 — Toán + Hóa + Ngoại ngữ</option>
+          <option value="D08">D08 — Toán + Sinh + Ngoại ngữ</option>
+          <option value="D09">D09 — Toán + Sử + Ngoại ngữ</option>
+          <option value="D10">D10 — Toán + Địa + Ngoại ngữ</option>
+          <option value="D14">D14 — Văn + Sử + Ngoại ngữ</option>
+          <option value="D15">D15 — Văn + Địa + Ngoại ngữ</option>
+          <option value="D66">D66 — Văn + GDKT + Ngoại ngữ</option>
+        </select>
+      </div>
+      <div class="picker-row">
+        <span class="picker-label">Phạm vi:</span>
+        <div class="scope-row">
+          <button class="scope-btn active" onclick="setScope('quoc_gia',this)">🌍 Toàn quốc</button>
+          <button class="scope-btn" onclick="setScope('mien_bac',this)">🔵 Miền Bắc</button>
+          <button class="scope-btn" onclick="setScope('mien_trung',this)">🟡 Miền Trung</button>
+          <button class="scope-btn" onclick="setScope('mien_nam',this)">🟢 Miền Nam</button>
+        </div>
+      </div>
+      <div>
+        <button class="btn-load" id="btnLoad" onclick="loadAll()">
+          <i class="fa-solid fa-chart-bar"></i> Xem phân bố điểm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHÂN BỐ -->
+  <div class="dist-card" id="distCard">
+    <div class="dist-card-header">
+      <span class="dist-card-title">📊 Phân Bố Điểm</span>
+      <span id="distSubtitle" style="font-size:13px;color:#888"></span>
+    </div>
+    <div class="dist-stats" id="distStats"></div>
+    <div class="dist-chart-wrap"><canvas id="distChart"></canvas></div>
+  </div>
+
+  <!-- XẾP HẠNG TỈNH -->
+  <div class="tinh-card" id="tinhCard">
+    <div class="tinh-card-header">
+      <span style="font-size:22px">🏆</span>
+      <span class="tinh-card-title">Xếp Hạng Điểm Trung Bình Theo Tỉnh</span>
+    </div>
+    <div class="top3-row" id="top3Row"></div>
+    <div style="overflow-x:auto;border-radius:16px;border:2px solid #ede9fe">
+      <table class="tinh-table">
+        <thead>
+          <tr>
+            <th style="text-align:center">#</th>
+            <th>Tỉnh / TP</th>
+            <th style="text-align:right">Điểm TB</th>
+            <th style="text-align:right">Điểm cao nhất</th>
+            <th style="text-align:right">Thí sinh</th>
+          </tr>
+        </thead>
+        <tbody id="tinhTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">Dữ liệu từ Bộ GD&ĐT • Điểm TB tính trên thí sinh thi đủ môn của khối</div>
+</div>
+
+<script>
+const API="https://thpt-api-production.up.railway.app/api/thpt";
+const MIEN_FULL={bac:"Miền Bắc",trung:"Miền Trung",nam:"Miền Nam"};
+const MIEN_MAP={mien_bac:"bac",mien_trung:"trung",mien_nam:"nam"};
+
+let currentScope="quoc_gia",distChartObj=null;
+
+function escHtml(s){if(s==null)return"";return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("overlay").classList.toggle("show");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("overlay").classList.remove("show");}
+
+function setScope(scope,btn){
+  currentScope=scope;
+  document.querySelectorAll(".scope-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+async function loadAll(){
+  const khoi=document.getElementById("khoiSelect").value;
+  const btn=document.getElementById("btnLoad");
+  btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Đang tải...';
+
+  // Build scope params
+  let distScope="quoc_gia",distMien=null;
+  if(currentScope.startsWith("mien_")){distScope="mien";distMien=MIEN_MAP[currentScope];}
+
+  try{
+    // Load song song
+    let distUrl=`${API}/dist?to_hop=${khoi}&scope=${distScope}`;
+    if(distMien)distUrl+=`&mien=${distMien}`;
+    let tinhUrl=`${API}/tinh-stats?to_hop=${khoi}`;
+
+    const[distRes,tinhRes]=await Promise.all([fetch(distUrl),fetch(tinhUrl)]);
+    const[distData,tinhData]=await Promise.all([distRes.json(),tinhRes.json()]);
+
+    renderDist(distData,khoi,distScope,distMien);
+    renderTinhRank(tinhData,khoi,distMien);
+  }catch(e){
+    alert("Lỗi tải dữ liệu: "+e.message);
+  }finally{
+    btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-chart-bar"></i> Xem phân bố điểm';
+  }
+}
+
+function renderDist(data,khoi,scope,mien){
+  const card=document.getElementById("distCard");
+  card.classList.add("show");
+
+  const scopeLabel=scope==="quoc_gia"?"Toàn quốc":`${MIEN_FULL[mien]||mien}`;
+  document.getElementById("distSubtitle").textContent=`Khối ${khoi} • ${scopeLabel} • ${data.total?.toLocaleString("vi-VN")||0} thí sinh`;
+
+  const bins=data.bins||[];
+  if(!bins.length){card.classList.remove("show");return;}
+
+  // Stats
+  const counts=bins.map(b=>b.count);
+  const total=counts.reduce((a,b)=>a+b,0);
+  let cumul=0,medianBin=null;
+  for(const[i,b]of bins.entries()){cumul+=b.count;if(!medianBin&&cumul>=total/2)medianBin=b;}
+  const maxBin=bins.reduce((a,b)=>b.count>a.count?b:a,bins[0]);
+
+  document.getElementById("distStats").innerHTML=`
+    <div class="dist-stat"><div class="ds-label">Tổng thí sinh</div><div class="ds-val">${total.toLocaleString("vi-VN")}</div></div>
+    <div class="dist-stat"><div class="ds-label">Điểm phổ biến nhất</div><div class="ds-val">${escHtml(maxBin?.range||"—")}</div></div>
+    <div class="dist-stat"><div class="ds-label">Điểm trung vị</div><div class="ds-val">${escHtml(medianBin?.range||"—")}</div></div>`;
+
+  if(distChartObj){distChartObj.destroy();distChartObj=null;}
+  distChartObj=new Chart(document.getElementById("distChart").getContext("2d"),{
+    type:"bar",
+    data:{
+      labels:bins.map(b=>b.range),
+      datasets:[{
+        label:"Số thí sinh",
+        data:bins.map(b=>b.count),
+        backgroundColor:bins.map(b=>b===maxBin?"#f59e0b":"#7c3aed55"),
+        borderColor:bins.map(b=>b===maxBin?"#f59e0b":"#7c3aed"),
+        borderWidth:1.5,borderRadius:4,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{title:c=>`Điểm: ${c[0].label}`,label:c=>` ${c.parsed.y.toLocaleString("vi-VN")} thí sinh (${(c.parsed.y/total*100).toFixed(1)}%)`}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:"'Be Vietnam Pro',sans-serif",size:10},maxRotation:45}},
+        y:{ticks:{font:{family:"'Be Vietnam Pro',sans-serif",size:11}},grid:{color:"#f0f0f0"}}
+      }
+    }
+  });
+}
+
+function renderTinhRank(data,khoi,filterMien){
+  const card=document.getElementById("tinhCard");
+  card.classList.add("show");
+
+  let rows=data.data||[];
+  // Filter theo miền nếu có
+  if(filterMien)rows=rows.filter(r=>r.mien===filterMien);
+
+  if(!rows.length){card.classList.remove("show");return;}
+
+  // Top 3
+  const top3=rows.slice(0,3);
+  const medals=["🥇","🥈","🥉"];
+  const cls=["t1","t2","t3"];
+  document.getElementById("top3Row").innerHTML=top3.map((r,i)=>`
+    <div class="top3-item ${cls[i]}">
+      <span class="t-medal">${medals[i]}</span>
+      <div class="t-tinh">${escHtml(r.tinh)}</div>
+      <div class="t-tb">${escHtml(String(r.diem_tb))}</div>
+      <div class="t-label">Điểm TB khối ${escHtml(khoi)}</div>
+      <div style="font-size:11px;color:#888;margin-top:4px">${escHtml(r.so_thi_sinh.toLocaleString("vi-VN"))} thí sinh</div>
+    </div>`).join("");
+
+  // Full table
+  document.getElementById("tinhTableBody").innerHTML=rows.map((r,i)=>{
+    const rank=i+1;
+    const medal=rank===1?"🥇":rank===2?"🥈":rank===3?"🥉":`${rank}`;
+    return `<tr>
+      <td class="rank-col">${medal}</td>
+      <td><strong>${escHtml(r.tinh)}</strong><br><span style="font-size:11px;color:#888">${escHtml(MIEN_FULL[r.mien]||r.mien)}</span></td>
+      <td class="tb-col">${escHtml(String(r.diem_tb))}</td>
+      <td class="max-col">${escHtml(String(r.diem_max))}</td>
+      <td class="count-col">${r.so_thi_sinh.toLocaleString("vi-VN")}</td>
+    </tr>`;
+  }).join("");
+}
+</script>
+</body>
+</html>
