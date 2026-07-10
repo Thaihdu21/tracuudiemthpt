@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tracuudiemthpt.vercel.app/sitemap.xml
