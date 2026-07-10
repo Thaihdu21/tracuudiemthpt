@@ -13,4 +13,7 @@
       ]
     }
   ]
+},
+{
+  "cleanUrls": true
 }
