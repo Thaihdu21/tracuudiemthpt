@@ -7,13 +7,12 @@
 <meta name="description" content="Tra cứu điểm thi tốt nghiệp THPT 2026. Xem điểm từng môn, xếp hạng theo khối, top thủ khoa toàn quốc.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <title>Tra Cứu Điểm Thi THPT 2026 | Xem Điểm Tốt Nghiệp Toàn Quốc</title>
+<title>Tra Cứu Điểm Thi THPT 2026 | Xem Điểm Tốt Nghiệp Toàn Quốc</title>
 <meta name="description" content="Tra cứu điểm thi tốt nghiệp THPT 2026 nhanh nhất. Nhập số báo danh để xem điểm từng môn, xếp hạng toàn quốc, theo tỉnh và theo miền. Cập nhật 1.208.859 thí sinh.">
 <meta name="keywords" content="tra cứu điểm thi THPT 2026, điểm thi tốt nghiệp 2026, xem điểm thi đại học 2026, tra điểm THPT quốc gia 2026, điểm thi theo SBD">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tracuudiemthpt.vercel.app/">
 <meta name="google-site-verification" content="qpFVsoeJyHJvbUbhfhWqZl1hwarGJ60ded11GTyH7H8" />
-<!-- Open Graph (Facebook, Zalo) -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tracuudiemthpt.vercel.app/">
 <meta property="og:title" content="Tra Cứu Điểm Thi THPT 2026 | Toàn Quốc">
@@ -23,14 +22,10 @@
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="vi_VN">
 <meta property="og:site_name" content="Tra Cứu Điểm THPT 2026">
-
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tra Cứu Điểm Thi THPT 2026">
 <meta name="twitter:description" content="Tra cứu điểm thi tốt nghiệp THPT 2026. 1.208.859 thí sinh toàn quốc.">
 <meta name="twitter:image" content="https://tracuudiemthpt.vercel.app/og-image.png">
-
-<!-- Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -80,47 +75,57 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .sidebar-divider{border:none;border-top:1px solid #f0f0f0;margin:6px 0 14px}
 .compare-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:10px;background:linear-gradient(135deg,#f3e8ff,#ede9fe);border:2px solid #7c3aed;cursor:pointer;transition:all 0.2s}
 .compare-banner:hover{transform:translateX(-4px);box-shadow:0 4px 16px rgba(124,58,237,0.2)}
-.donate-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:10px;background:linear-gradient(135deg,#fff0f6,#ffe4f0);border:2px solid #f72585;cursor:pointer;transition:all 0.2s}
-.donate-banner:hover{transform:translateX(-4px);box-shadow:0 4px 16px rgba(247,37,133,0.2)}
+
+/* ===== DONATE MODAL - ABBANK THEME ===== */
+.donate-banner{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:10px;background:linear-gradient(135deg,#e6f7f6,#fff3e6);border:2px solid #FF6B00;cursor:pointer;transition:all 0.2s}
+.donate-banner:hover{transform:translateX(-4px);box-shadow:0 4px 16px rgba(255,107,0,0.2)}
 .donate-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .donate-overlay.show{opacity:1;pointer-events:all}
 .donate-modal{background:white;border-radius:28px;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,0.3);overflow:hidden;transform:translateY(40px) scale(0.96);transition:transform 0.35s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
 .donate-overlay.show .donate-modal{transform:translateY(0) scale(1)}
-.dm-header{background:linear-gradient(135deg,#ae017e,#f72585);padding:28px 24px 22px;text-align:center;position:relative}
+.donate-modal::-webkit-scrollbar{width:6px}
+.donate-modal::-webkit-scrollbar-track{background:rgba(0,167,157,0.08);border-radius:100px}
+.donate-modal::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#00A79D,#FF6B00);border-radius:100px}
+.donate-modal::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#00c4b8,#ff8c3a)}
+.dm-header{background:linear-gradient(135deg,#00A79D,#00c4b8);padding:28px 24px 22px;text-align:center;position:relative}
 .dm-header .dm-logo{font-size:52px;display:block;margin-bottom:8px}
 .dm-header h2{color:white;font-size:20px;font-weight:800;margin-bottom:4px}
-.dm-header p{color:rgba(255,255,255,0.85);font-size:13px;line-height:1.6}
-.dm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;cursor:pointer;color:white;font-size:15px;display:flex;align-items:center;justify-content:center}
+.dm-header p{color:rgba(255,255,255,0.9);font-size:13px;line-height:1.6}
+.dm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.25);border:none;cursor:pointer;color:white;font-size:15px;display:flex;align-items:center;justify-content:center}
+.dm-close:hover{background:rgba(255,255,255,0.4)}
 .dm-body{padding:22px 20px}
 .dm-label{font-size:12px;font-weight:800;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
 .dm-coffee-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.dm-coffee-btn{padding:12px 6px;border-radius:14px;border:2px solid #f0e0f0;background:white;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:center}
-.dm-coffee-btn:hover{border-color:#f72585;background:#fff0f6}
-.dm-coffee-btn.active{border-color:#f72585;background:linear-gradient(135deg,#fff0f6,#ffe4f0)}
-.dm-coffee-btn .cb-icon{font-size:22px;display:block;margin-bottom:4px}
-.dm-coffee-btn .cb-label{font-size:11px;font-weight:700;color:#be185d}
-.dm-coffee-btn .cb-price{font-size:12px;font-weight:800;color:#f72585;margin-top:2px}
+.dm-coffee-btn{padding:10px 6px;border-radius:14px;border:2px solid #e0f5f4;background:white;font-family:inherit;cursor:pointer;transition:all 0.2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.dm-coffee-btn:hover{border-color:#FF6B00;background:#fff3e6;transform:translateY(-2px)}
+.dm-coffee-btn.active{border-color:#FF6B00;background:linear-gradient(135deg,#fff3e6,#ffe0c2);box-shadow:0 4px 12px rgba(255,107,0,0.2)}
+.dm-coffee-btn .cb-icon{font-size:22px;display:block}
+.dm-coffee-btn .cb-label{font-size:11px;font-weight:700;color:#00A79D;display:block}
+.dm-coffee-btn .cb-price{font-size:12px;font-weight:800;color:#FF6B00;display:block;margin-top:1px}
 .dm-custom-wrap{position:relative;margin-bottom:6px}
 .dm-custom-wrap input{width:100%;padding:13px 54px 13px 16px;border:2px solid #e0e0e0;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;outline:none;transition:all 0.3s;color:#333}
-.dm-custom-wrap input:focus{border-color:#f72585;box-shadow:0 0 0 4px rgba(247,37,133,0.12)}
+.dm-custom-wrap input:focus{border-color:#FF6B00;box-shadow:0 0 0 4px rgba(255,107,0,0.12)}
 .dm-custom-unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:#bbb}
 .dm-min-note{font-size:12px;color:#ef4444;margin-bottom:10px;display:none;padding-left:4px}
 .dm-min-note.show{display:block}
-.dm-btn-qr{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,#ae017e,#f72585);color:white;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:all 0.3s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px}
-.dm-btn-qr:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(247,37,133,0.45)}
+.dm-btn-qr{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,#00A79D,#FF6B00);color:white;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:all 0.3s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px}
+.dm-btn-qr:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,107,0,0.4)}
 .dm-qr-section{padding:0 20px 24px;display:none;text-align:center}
 .dm-qr-section.show{display:block}
-.dm-qr-amount{font-size:26px;font-weight:800;color:#be185d;margin-bottom:2px}
+.dm-qr-amount{font-size:26px;font-weight:800;color:#00A79D;margin-bottom:2px}
 .dm-qr-note{font-size:13px;color:#999;margin-bottom:14px}
-.dm-qr-img-wrap{background:linear-gradient(135deg,#fff0f6,#ffe4f0);border-radius:20px;padding:14px;margin-bottom:14px;border:2px solid #fbb6ce;display:inline-block}
+.dm-qr-img-wrap{background:linear-gradient(135deg,#e6f7f6,#fff3e6);border-radius:20px;padding:14px;margin-bottom:14px;border:2px solid #00A79D;display:inline-block}
 .dm-qr-img-wrap img{width:200px;height:200px;border-radius:10px;display:block}
-.dm-bank-info{background:#fdf2f8;border:1px solid #fbb6ce;border-radius:14px;padding:12px 16px;font-size:13px;color:#831843;text-align:left;line-height:2;margin-bottom:16px}
-.dm-bank-info strong{color:#be185d}
+.dm-bank-info{background:#f0faf9;border:1px solid #b2e4e1;border-radius:14px;padding:12px 16px;font-size:13px;color:#006b66;text-align:left;line-height:2;margin-bottom:16px}
+.dm-bank-info strong{color:#00A79D}
 .dm-actions{display:flex;gap:8px}
-.dm-btn-back{flex:1;padding:12px;border-radius:12px;border:2px solid #fbb6ce;background:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;color:#be185d}
-.dm-btn-thanks{flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#ae017e,#f72585);font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;color:white}
-.dm-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:#ddd;font-size:12px}
-.dm-divider::before,.dm-divider::after{content:'';flex:1;height:1px;background:#f0e0f0}
+.dm-btn-back{flex:1;padding:12px;border-radius:12px;border:2px solid #00A79D;background:white;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;color:#00A79D;transition:all 0.2s}
+.dm-btn-back:hover{background:#e6f7f6}
+.dm-btn-thanks{flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#00A79D,#FF6B00);font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;color:white}
+.dm-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:#bbb;font-size:12px}
+.dm-divider::before,.dm-divider::after{content:'';flex:1;height:1px;background:#e0f5f4}
+/* ===== END DONATE ===== */
+
 .compare-overlay{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .compare-overlay.show{opacity:1;pointer-events:all}
 .compare-modal{background:white;border-radius:28px;width:100%;max-width:560px;box-shadow:0 30px 80px rgba(0,0,0,0.3);overflow:hidden;transform:translateY(40px) scale(0.96);transition:transform 0.35s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
@@ -190,12 +195,12 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
 .score-box.hoa{background:linear-gradient(135deg,#fef3c722,#fde68a44);border:2px solid #fbbf24}
 .score-box.sinh{background:linear-gradient(135deg,#d1fae522,#6ee7b744);border:2px solid #34d399}
 .score-box.tin{background:linear-gradient(135deg,#ede9fe22,#c4b5fd44);border:2px solid #a78bfa}
+.score-box.cncn{background:linear-gradient(135deg,#fdf4ff22,#e879f944);border:2px solid #d946ef}
+.score-box.cnnn{background:linear-gradient(135deg,#f0fdf422,#86efac44);border:2px solid #4ade80}
 .score-box.su{background:linear-gradient(135deg,#fee2e222,#fca5a544);border:2px solid #f87171}
 .score-box.dia{background:linear-gradient(135deg,#ffedd522,#fdba7444);border:2px solid #fb923c}
 .score-box.gdkt{background:linear-gradient(135deg,#f0fdf422,#bbf7d044);border:2px solid #4ade80}
 .score-box.nn{background:linear-gradient(135deg,#e0f2fe22,#7dd3fc44);border:2px solid #38bdf8}
-.score-box.cncn{background:linear-gradient(135deg,#fdf4ff22,#e879f944);border:2px solid #d946ef}
-.score-box.cnnn{background:linear-gradient(135deg,#f0fdf422,#86efac44);border:2px solid #4ade80}
 .score-box .mon{font-size:11px;font-weight:700;color:#666;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
 .score-box .diem{font-size:30px;font-weight:800;line-height:1}
 .score-box.toan .diem{color:#059669}
@@ -331,10 +336,10 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     <div class="donate-banner" onclick="openDonate()">
       <div style="font-size:26px">☕</div>
       <div style="flex:1">
-        <div style="font-size:14px;font-weight:800;color:#be185d">Mua cho mình ly cà phê?</div>
-        <div style="font-size:11px;color:#db2777;margin-top:2px">Ủng hộ để duy trì trang web 💙</div>
+        <div style="font-size:14px;font-weight:800;color:#FF6B00">Mua cho mình ly cà phê?</div>
+        <div style="font-size:11px;color:#00A79D;margin-top:2px">Ủng hộ để duy trì trang web 💙</div>
       </div>
-      <i class="fa-solid fa-chevron-right" style="color:#f72585;font-size:12px"></i>
+      <i class="fa-solid fa-chevron-right" style="color:#FF6B00;font-size:12px"></i>
     </div>
     <hr class="sidebar-divider">
     <div class="sidebar-section-label">Thông tin</div>
@@ -360,12 +365,36 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
       <div class="dm-body">
         <div class="dm-label">Chọn số ly ☕</div>
         <div class="dm-coffee-grid">
-          <button class="dm-coffee-btn" onclick="selectCoffee(1,20000,this)"><span class="cb-icon">☕</span><span class="cb-label">1 ly</span><span class="cb-price">20.000đ</span></button>
-          <button class="dm-coffee-btn" onclick="selectCoffee(2,40000,this)"><span class="cb-icon">☕☕</span><span class="cb-label">2 ly</span><span class="cb-price">40.000đ</span></button>
-          <button class="dm-coffee-btn" onclick="selectCoffee(3,60000,this)"><span class="cb-icon">☕☕☕</span><span class="cb-label">3 ly</span><span class="cb-price">60.000đ</span></button>
-          <button class="dm-coffee-btn" onclick="selectCoffee(5,100000,this)"><span class="cb-icon">🧋</span><span class="cb-label">5 ly</span><span class="cb-price">100.000đ</span></button>
-          <button class="dm-coffee-btn" onclick="selectCoffee(10,200000,this)"><span class="cb-icon">🎁</span><span class="cb-label">10 ly</span><span class="cb-price">200.000đ</span></button>
-          <button class="dm-coffee-btn" onclick="selectCoffee(25,500000,this)"><span class="cb-icon">🏆</span><span class="cb-label">25 ly</span><span class="cb-price">500.000đ</span></button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(1,20000,this)">
+            <span class="cb-icon">☕</span>
+            <span class="cb-label">1 ly</span>
+            <span class="cb-price">20.000đ</span>
+          </button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(2,40000,this)">
+            <span class="cb-icon">☕☕</span>
+            <span class="cb-label">2 ly</span>
+            <span class="cb-price">40.000đ</span>
+          </button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(3,60000,this)">
+            <span class="cb-icon">☕☕☕</span>
+            <span class="cb-label">3 ly</span>
+            <span class="cb-price">60.000đ</span>
+          </button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(5,100000,this)">
+            <span class="cb-icon">🧋</span>
+            <span class="cb-label">5 ly</span>
+            <span class="cb-price">100.000đ</span>
+          </button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(10,200000,this)">
+            <span class="cb-icon">🎁</span>
+            <span class="cb-label">10 ly</span>
+            <span class="cb-price">200.000đ</span>
+          </button>
+          <button class="dm-coffee-btn" onclick="selectCoffee(25,500000,this)">
+            <span class="cb-icon">🏆</span>
+            <span class="cb-label">25 ly</span>
+            <span class="cb-price">500.000đ</span>
+          </button>
         </div>
         <div class="dm-divider">hoặc nhập tuỳ ý</div>
         <div class="dm-custom-wrap">
@@ -373,7 +402,9 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
           <span class="dm-custom-unit">VNĐ</span>
         </div>
         <div class="dm-min-note" id="dmMinNote">⚠️ Số tiền tối thiểu 5.000đ</div>
-        <button class="dm-btn-qr" onclick="genDonateQR()"><i class="fa-solid fa-qrcode"></i> Tạo mã QR ABBANK</button>
+        <button class="dm-btn-qr" onclick="genDonateQR()">
+          <i class="fa-solid fa-qrcode"></i> Tạo mã QR ABBANK
+        </button>
       </div>
     </div>
     <div class="dm-qr-section" id="dmStep2">
@@ -449,12 +480,10 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     </div>
   </div>
 
-  <!-- RESULT -->
   <div class="card" id="resultCard" style="display:none">
     <div id="resultContent"></div>
   </div>
 
-  <!-- PHÂN BỐ (inline, chỉ hiện sau tra cứu) -->
   <div class="dist-card" id="distCard" style="display:none">
     <div class="dist-header">
       <span style="font-size:22px">📊</span>
@@ -476,7 +505,6 @@ body{font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;background:linear-
     </div>
   </div>
 
-  <!-- THỦ KHOA (luôn hiện, xuống dưới sau tra cứu) -->
   <div class="tk-card" id="tkCard">
     <div class="tk-header">
       <span style="font-size:22px">🏆</span>
@@ -544,17 +572,14 @@ const MIEN_FULL={bac:"Miền Bắc",trung:"Miền Trung",nam:"Miền Nam"};
 let currentData=null,selectedKhoi=null,tkScope="quoc_gia",tkMaTinh=null,tkMien=null;
 let topData=[],topShown=10,distScope="quoc_gia",distChart=null,distMyTong=null,cmChart=null;
 
-// SIDEBAR
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("overlay").classList.toggle("show");}
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("overlay").classList.remove("show");}
 
-// DONATE
-let dmSel=1;
 function openDonate(){closeSidebar();dmBackToStep1();document.getElementById("donateOverlay").classList.add("show");document.body.style.overflow="hidden";}
 function closeDonate(){document.getElementById("donateOverlay").classList.remove("show");document.body.style.overflow="";}
 function closeDonateOutside(e){if(e.target===document.getElementById("donateOverlay"))closeDonate();}
-function selectCoffee(c,a,el){dmSel=c;document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));el.classList.add("active");document.getElementById("dmAmount").value=a;document.getElementById("dmMinNote").classList.remove("show");}
-function onDmInput(){document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));dmSel=0;const v=parseInt(document.getElementById("dmAmount").value);document.getElementById("dmMinNote").classList.toggle("show",v>0&&v<5000);}
+function selectCoffee(c,a,el){document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));el.classList.add("active");document.getElementById("dmAmount").value=a;document.getElementById("dmMinNote").classList.remove("show");}
+function onDmInput(){document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));const v=parseInt(document.getElementById("dmAmount").value);document.getElementById("dmMinNote").classList.toggle("show",v>0&&v<5000);}
 function genDonateQR(){
   const val=parseInt(document.getElementById("dmAmount").value);
   if(!val||val<5000){document.getElementById("dmMinNote").classList.add("show");return;}
@@ -567,9 +592,8 @@ function genDonateQR(){
   document.getElementById("dmStep1").style.display="none";
   document.getElementById("dmStep2").classList.add("show");
 }
-function dmBackToStep1(){document.getElementById("dmStep1").style.display="block";document.getElementById("dmStep2").classList.remove("show");document.getElementById("dmAmount").value="";document.getElementById("dmMinNote").classList.remove("show");document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));dmSel=1;}
+function dmBackToStep1(){document.getElementById("dmStep1").style.display="block";document.getElementById("dmStep2").classList.remove("show");document.getElementById("dmAmount").value="";document.getElementById("dmMinNote").classList.remove("show");document.querySelectorAll(".dm-coffee-btn").forEach(b=>b.classList.remove("active"));}
 
-// COMPARE
 function openCompare(){
   closeSidebar();
   document.getElementById("compareOverlay").classList.add("show");
@@ -641,7 +665,6 @@ function renderCompare(list,khoi,info){
   document.getElementById("cmTableBody").innerHTML=rows;
 }
 
-// THỦ KHOA
 async function loadTop(){
   const khoi=document.getElementById("tkKhoiSelect").value;
   const info=TO_HOP[khoi];
@@ -689,7 +712,6 @@ function setTkScope(scope,btn){
   loadTop();
 }
 
-// SEARCH
 async function search(){
   const sbd=document.getElementById("sbdInput").value.trim();
   if(!sbd)return;
@@ -720,12 +742,10 @@ function showResult(html){
   const card=document.getElementById("resultCard");
   document.getElementById("resultContent").innerHTML=html;
   card.style.display="block";
-  // Đẩy thủ khoa xuống dưới distCard
   const tk=document.getElementById("tkCard");
   const dist=document.getElementById("distCard");
   const container=document.querySelector(".container");
   const footer=document.querySelector(".footer");
-  // Sắp xếp: resultCard → distCard → tkCard → footer
   container.insertBefore(card,dist);
   container.insertBefore(dist,tk);
   container.insertBefore(tk,footer);
@@ -758,7 +778,6 @@ function renderResult(data){
   if(data.to_hop_kha_dung.length)selectKhoi(data.to_hop_kha_dung[0].ma);
 }
 
-// CHỌN KHỐI
 async function selectKhoi(ma){
   selectedKhoi=ma;
   const info=TO_HOP[ma];const data=currentData;
@@ -785,7 +804,6 @@ async function selectKhoi(ma){
   loadDist(ma,"quoc_gia",tong);
 }
 
-// RANK
 function renderRankBox(ma){
   const data=currentData;
   document.getElementById("rankBox").innerHTML=`
@@ -814,7 +832,6 @@ async function loadRank(ma,scope,btn){
   }catch{rows.innerHTML='<div class="rank-loading" style="color:#ef4444">❌ Lỗi kết nối</div>';}
 }
 
-// PHÂN BỐ
 async function loadDist(ma,scope,myTong){
   if(myTong!==undefined)distMyTong=myTong;
   distScope=scope;
@@ -861,7 +878,6 @@ function setDistScope(scope,btn){
   if(selectedKhoi)loadDist(selectedKhoi,scope,distMyTong);
 }
 
-// AI
 async function renderAI(data,ma,tong,note){
   const box=document.getElementById("aiBox");
   if(!box)return;
